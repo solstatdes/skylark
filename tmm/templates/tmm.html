@@ -17,8 +17,7 @@
         </section>
 
         <section class="">
-        <p>{{digit}}</p>
-        <p>{{projects.type}}</p>
+        <p>{{project.json}}</p>
         <p id="project"></p>
         </section>
 
@@ -32,7 +31,13 @@
 
 {% block script %}
 <script>
-var = {{projects}};
-document.getElementById("project").innerHTML = "{{projects}}";
+document.getElementById("project").innerHTML = "{{project.json}}";
+var obj = (("{{project.json}}").replace(/&(l|g|quo)t;/g, function(a,b){
+        return {
+            l   : '<',
+            g   : '>',
+            quo : '"'
+        }[b];
+    }));
 </script>
 {% endblock %}
