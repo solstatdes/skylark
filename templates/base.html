@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en " itemscope itemtype="http://schema.org/Organization">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Solid State Design</title>
+    <meta property="og:image" content="{% static 'images/other_images/bg1.jpg' %}">
+    
+
+    <!-- Add the following three tags inside head. -->
+    <meta itemprop="name" content="Solid State Design">
+    <meta itemprop="description" content="Solid State Design. Attractive, functional websites for the scientific community">
+    <meta itemprop="image" content="/static/images/other_images/bg1.jpg">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon/favicon.ico' %}">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}" rel="stylesheet">
+    <!-- owl carousel css -->
+    <link href="{% static 'js/owl-carousel/owl.carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'js/owl-carousel/owl.theme.css' %}" rel="stylesheet">
+    <link href="{% static 'js/owl-carousel/owl.transitions.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="background-image-overlay"></div>
+
+    <div id="outer-background-container" data-default-background-img="{% static 'images/other_images/bg1.jpg'}" style="background-image:url(/static/images/other_images/bg1.jpg);"></div>
+    <!-- end: #outer-background-container -->    
+
+    <!-- Outer Container -->
+    <div id="outer-container">
+
+      <!-- Left Sidebar -->
+      <section id="left-sidebar">
+        
+        <div class="logo">
+          <a href="#intro" class="link-scroll"><img src="{% static 'images/other_images/ss_logo.png' %}" alt="Solid State Design"></a>
+        </div><!-- .logo -->
+
+        <!-- Menu Icon for smaller viewports -->
+        <div id="mobile-menu-icon" class="visible-xs" onClick="toggle_main_menu();"><span class="glyphicon glyphicon-th"></span></div>
+
+        <ul id="main-menu">
+        {% block sidebar %}
+          <li id="menu-item-text" class="menu-item scroll"><a href="#text">Text</a></li>
+        {% endblock %}
+        </ul><!-- #main-menu -->
+
+      </section><!-- #left-sidebar -->
+      <!-- end: Left Sidebar -->
+
+      <section id="main-content" class="clearfix">
+
+      {% block content %}
+        
+        <article id="intro" class="section-wrapper clearfix" data-custom-background-img="{% static 'images/other_images/bg1.jpg' %}">
+          <div class="content-wrapper clearfix">
+            <div class="col-sm-10 col-md-9 pull-right">
+
+                <section class="feature-text">
+                  <h1>Welcome to the Solid State Design <strong>Baseplate</strong></h1>
+                  <p>This is your blank canvas. Go create.</p>
+                  <p><a href="#text" class="link-scroll btn btn-outline-inverse btn-lg">find out more</a></p>
+                </section>
+
+
+            </div><!-- .col-sm-10 -->
+          </div><!-- .content-wrapper -->
+        </article><!-- .section-wrapper -->
+
+        {% endblock %}
+
+
+      </section><!-- #main-content -->
+
+      <!-- Footer -->
+      <section id="footer">
+
+        <!-- Go to Top -->
+        <div id="go-to-top" onclick="scroll_to_top();"><span class="icon glyphicon glyphicon-chevron-up"></span></div>
+
+        <ul class="social-icons">
+          <li><a href="https://www.facebook.com/solstatdes/" target="_blank" title="Facebook"><img src="{% static 'images/theme_images/social_icons/facebook.png' %}" alt="Facebook"></a></li>
+          <li><a href="https://twitter.com/solstatdes" target="_blank" title="Twitter"><img src="{% static 'images/theme_images/social_icons/twitter.png' %}" alt="Twitter"></a></li>
+          <li><a href="https://plus.google.com/u/1/105759583814338252258" target="_blank" title="Google+"><img src="{% static 'images/theme_images/social_icons/googleplus.png' %}" alt="Google+"></a></li>
+        </ul>
+
+        <!-- copyright text -->
+        <div class="footer-text-line">&copy; 2016 Solid State Design</div>
+      </section>
+      <!-- end: Footer -->      
+
+    </div><!-- #outer-container -->
+    <!-- end: Outer Container -->
+
+    <!-- Modal -->
+    <!-- DO NOT MOVE, EDIT OR REMOVE - this is needed in order for popup content to be populated in it -->
+    <div class="modal fade" id="common-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <div class="modal-body">
+          </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+      </div><!-- .modal-dialog -->
+    </div><!-- .modal -->    
+
+    <!-- Javascripts
+    ================================================== -->
+
+    <!-- Jquery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+    <!-- Easing - for transitions and effects -->
+    <script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+
+    <!-- background image strech script -->
+    <script src="{% static 'js/jquery.backstretch.min.js' %}"></script>
+    <!-- background image fix for IE 9 or less
+       - use same background as set above to <body> -->
+    <!--[if lt IE 9]>
+    <script type="text/javascript">
+    $(document).ready(function(){
+      jQuery("#outer-background-container").backstretch("{% static 'images/other_images/bg1.jpg' %}");
+    });
+    </script> 
+    <![endif]-->  
+
+    <!-- detect mobile browsers -->
+    <script src="{% static 'js/detectmobilebrowser.js' %}"></script>
+
+    <!-- owl carousel js -->
+    <script src="{% static 'js/owl-carousel/owl.carousel.min.js' %}"></script>
+
+    <!-- Custom functions for this theme -->
+    <script src="{% static 'js/functions.min.js' %}"></script>
+    <script src="{% static 'js/initialise-functions.js' %}"></script>
+
+    <!-- IE9 form fields placeholder fix -->
+    <!--[if lt IE 9]>
+    <script>contact_form_IE9_placeholder_fix();</script>
+    <![endif]-->  
+
+    {% block script %}
+    {% endblock %}
+
+  </body>
+</html>

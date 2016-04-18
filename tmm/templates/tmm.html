@@ -1,0 +1,38 @@
+ {% extends "base.html" %}
+{% load static %}
+
+{% block sidebar %}
+<li id="menu-item-text" class="menu-item scroll"><a href="#text">Text</a></li>
+{% endblock %}
+
+{% block content %}
+<article id="intro" class="section-wrapper clearfix" data-custom-background-img="{% static 'images/other_images/bg1.jpg' %}">
+  <div class="content-wrapper clearfix">
+    <div class="col-sm-10 col-md-9 pull-right">
+
+        <section class="feature-text">
+          <h1>Welcome to the Solid State Design <strong>Baseplate</strong></h1>
+          <p>This is your blank canvas. Go create.</p>
+          <p><a href="#text" class="link-scroll btn btn-outline-inverse btn-lg">find out more</a></p>
+        </section>
+
+        <section class="">
+        <p>{{digit}}</p>
+        <p>{{projects.type}}</p>
+        <p id="project"></p>
+        </section>
+
+
+    </div><!-- .col-sm-10 -->
+  </div><!-- .content-wrapper -->
+</article><!-- .section-wrapper -->
+{% endblock %}
+
+
+
+{% block script %}
+<script>
+var = {{projects}};
+document.getElementById("project").innerHTML = "{{projects}}";
+</script>
+{% endblock %}
