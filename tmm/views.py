@@ -3,16 +3,25 @@ from django.http import HttpResponse
 from tmm.models import Project
 from tmm.forms import SaveForm
 import json
+import yaml
+import os
+from django.conf import settings
+
 
 def home(request):
     projects = Project.objects.all()
     project = projects[0]
     digit = len(projects)
-    
-    project.json = json.dumps(project.json)
+
+    path = os.path.join(settings.BASE_DIR, 'tmm/library.yml')
+
+    with open(path, 'r') as f:
+        library = yaml.load(f)
+
+    project.json = json.dumps(project.json).encode('utf8')
     
 
-    return render(request, 'tmm.html', {'project': project, 'form':SaveForm()})
+    return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library})
 
 def save_project(request):
     if request.method == 'POST':
