@@ -11,14 +11,20 @@
     <div class="col-sm-10 col-md-9 pull-right">
 
         <section class="feature-text">
-          <h1>Welcome to the Solid State Design <strong>Baseplate</strong></h1>
-          <p>This is your blank canvas. Go create.</p>
-          <p><a href="#text" class="link-scroll btn btn-outline-inverse btn-lg">find out more</a></p>
+          <h1>Transfer Matrix Model</h1>
         </section>
 
         <section class="">
-        <p>{{project.json}}</p>
-        <p id="project"></p>
+        <ul class="stack-list" id="stack">
+        </ul>
+        <form method="POST" id="save-form" name="{{project.pk}}">
+            {% csrf_token %}
+            <div>
+            </div>
+            <input type="submit" class="link-scroll btn btn-outline-inverse btn-lg" value="Save">
+        </form>
+
+        
         </section>
 
 
@@ -27,17 +33,15 @@
 </article><!-- .section-wrapper -->
 {% endblock %}
 
-
-
 {% block script %}
-<script>
-document.getElementById("project").innerHTML = "{{project.json}}";
-var obj = (("{{project.json}}").replace(/&(l|g|quo)t;/g, function(a,b){
-        return {
-            l   : '<',
-            g   : '>',
-            quo : '"'
-        }[b];
-    }));
-</script>
+
+    <script src="{% static 'js/tmm.js' %}"></script>
+    <script src="{% static 'js/ajax.js' %}"></script>
+
+    <script>
+    //initiate
+    var config = parseJSON("{{project.json}}");
+    listStack(config);
+    </script>
+
 {% endblock %}
