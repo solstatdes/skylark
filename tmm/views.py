@@ -13,12 +13,14 @@ def home(request):
     project = projects[0]
     digit = len(projects)
 
-    path = os.path.join(settings.BASE_DIR, 'tmm/library.yml')
+    path = os.path.join(settings.STATIC_PATH, 'refractiveindex/database/library.yml')
 
     with open(path, 'r') as f:
         library = yaml.load(f)
 
-    project.json = json.dumps(project.json).encode('utf8')
+    project.json = json.dumps(project.json)
+    library = json.dumps(library)
+    
     
 
     return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library})

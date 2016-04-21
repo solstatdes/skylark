@@ -21,14 +21,63 @@ function listStack (config) {
     };
 };
 
+function parseBook(book) {
+    var li="";
+    $.each(book, function(i, v) {
+        li+="<div class='subfolder'><p class='level3'><a>"+v.PAGE+"</a></p></div>";
+    });
+    return li;
+}
+
+
+function parseShelf(shelf) {
+    var li = "";
+    $.each(shelf.content, function(i, v) {
+        if (v.content) {
+            subul = parseBook(v.content);
+            li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
+        }
+    });
+    return li;
+}
+function parseLibrary(library) {
+    var li = "";
+    $.each(library, function(i, v) {
+        subul = parseShelf(v)
+        li += "<div class='subfolder'><p class='level1' id='"+v.SHELF+"'><a>"+v.name+"</a></p>"+subul+"</div>";
+    });
+    return li;
+}
+
+// Library search by "name"
+function librarySearch (library, key) {
+    result = [];
+    main = library[0].content;
+    $.each(library, function(i,w) {
+        $.each(w.content, function(i,v) {
+            try {
+                if (v.name.search(key) != -1) {
+                    result.push(v);
+                }
+            } catch (e) {
+                console.log(e instanceof TypeError);
+            }
+        });
+    });
+    return result;
+};
+
 $(function() {
+    //Library Toggles
+    $(".subfolder p").click(function() {
+        $(this).siblings('.subfolder').toggle();
+    });
 
 
     // deleteFilm listener
     $('body').on("click", ".delete-layer", function() {
         var id = $(this).attr('id');
         var suffix = id.match(/\d+/)[0];
-        console.log('delete '+suffix);
         deleteFilm(suffix);
     });
 
@@ -49,7 +98,6 @@ $(function() {
 
     // AJAX for save
     function save_stack(config, project_id) {
-        console.log("save_stack project "+project_id); //SC
         $.ajax({
             url   :"save_project/", //endpoint
             type  :"POST", // http method
@@ -63,6 +111,8 @@ $(function() {
             }
         });
     };
+
+
        
 })
 

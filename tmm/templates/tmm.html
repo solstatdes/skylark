@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block sidebar %}
-<li id="menu-item-text" class="menu-item scroll"><a href="#text">Text</a></li>
+<li id="menu-item-text" class="menu-item scroll"><a href="#library-page">Library</a></li>
 {% endblock %}
 
 {% block content %}
@@ -31,6 +31,22 @@
     </div><!-- .col-sm-10 -->
   </div><!-- .content-wrapper -->
 </article><!-- .section-wrapper -->
+
+<article id="library-page" class="section-wrapper clearfix" data-custom-background-img="{% static 'images/other_images/bg1.jpg' %}">
+  <div class="full-wrapper clearfix">
+    <div class="col-sm-10 col-md-9 pull-right">
+
+        <section class="feature-text">
+          <h1>Library</h1>
+        </section>
+
+        <section id="library-list">
+        </section>
+
+
+    </div><!-- .col-sm-10 -->
+  </div><!-- .content-wrapper -->
+</article><!-- .section-wrapper -->
 {% endblock %}
 
 {% block script %}
@@ -41,9 +57,13 @@
     <script>
     //initiate
     var config = parseJSON("{{project.json}}");
-    var library = "{{library}}";
+    var library = parseJSON("{{library}}");
     console.log(library);
     listStack(config);
+    var html  = parseLibrary(library);
+    $('#library-list').html(html);
+
+    //var key = new RegExp(/Telluride/i)
     </script>
 
 {% endblock %}

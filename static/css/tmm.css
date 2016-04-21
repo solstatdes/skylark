@@ -5,3 +5,17 @@ ul.stack-list {
 a.film-operation {
     cursor: pointer;
 }
+
+.subfolder .subfolder, .subfolder .subfolder .subfolder {
+    display: none;
+}
+
+p.level1 {
+    font-size: 1.5em;
+}
+
+p.level2 {font-size: 1.2em;}
+
+.full-wrapper {
+    text-align: right;
+}
