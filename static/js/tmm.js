@@ -76,7 +76,8 @@ $(function() {
 
     function setLibpage(result) {
         libpage = result;
-        object = parseJSON(libpage.result)
+        console.log(libpage.page)
+        object = parseJSON(libpage.page)
         references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+object.REFERENCES+"</p></div></div>";
         comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+object.COMMENTS+"</p></div></div>";
         data = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>Data type: "+object.DATA[0].type+"</p></div></div>";
