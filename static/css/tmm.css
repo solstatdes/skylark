@@ -10,12 +10,23 @@ a.film-operation {
     display: none;
 }
 
-p.level1 {
-    font-size: 1.5em;
+.subfolder{
+    cursor:pointer;
 }
 
-p.level2 {font-size: 1.2em;}
+
+p.level1 {
+    font-size: 1.3em;
+}
+
+p.level2 {font-size: 1.1em;}
+p.level3 {font-size: 0.9em;}
+p.level4 {font-size: 0.5em;}
 
 .full-wrapper {
     text-align: right;
+}
+
+section.output-text p {
+    text-align: left;
 }

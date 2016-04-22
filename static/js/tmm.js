@@ -24,7 +24,7 @@ function listStack (config) {
 function parseBook(book) {
     var li="";
     $.each(book, function(i, v) {
-        li+="<div class='subfolder'><p class='level3'><a>"+v.PAGE+"</a></p></div>";
+        li+="<div class='subfolder'><p id='"+v.path+"' class='level3'><a>"+v.name+"</a> - <a class='libadd'>add</a></p></div>";
     });
     return li;
 }
@@ -68,6 +68,39 @@ function librarySearch (library, key) {
 };
 
 $(function() {
+    // Library page listener
+    $('body').on("click", ".level3", function() {
+        var path = $(this).attr('id');
+        libPage(path);
+    });
+
+    function setLibpage(result) {
+        libpage = result;
+        object = parseJSON(libpage.result)
+        references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+object.REFERENCES+"</p></div></div>";
+        comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+object.COMMENTS+"</p></div></div>";
+        data = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>Data type: "+object.DATA[0].type+"</p></div></div>";
+        $('#lib-page').html(references+comments+data);
+        console.log(object);
+    }
+
+    // AJAX for get page
+    function libPage (path) {
+        console.log(path);
+        $.ajax({
+            url   :"lib_page/", //endpoint
+            type  :"POST", // http method
+            data  : {data:path}, // data send with post request
+            success :function(json) {
+                console.log('success');
+                setLibpage(json);
+            },
+            error: function(xhr,errmsg,err) {
+                console.log(xhr,status + ": " + xhr.responseText);
+            }
+        });
+    }
+    
     //Library Toggles
     $(".subfolder p").click(function() {
         $(this).siblings('.subfolder').toggle();
@@ -80,6 +113,7 @@ $(function() {
         var suffix = id.match(/\d+/)[0];
         deleteFilm(suffix);
     });
+
 
     // deleteFilm function
     function deleteFilm(id) {

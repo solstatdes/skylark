@@ -6,6 +6,7 @@ import json
 import yaml
 import os
 from django.conf import settings
+import db
 
 
 def home(request):
@@ -25,6 +26,30 @@ def home(request):
 
     return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library})
 
+def lib_page(request):
+    if request.method == 'POST':
+        page_path = os.path.join(settings.LIBRARY_PATH, request.POST.get('data'))
+
+        with open(page_path, 'r') as f:
+            page = yaml.load(f)
+
+        # create page object using db
+        page_obj = db.L(page_path)
+        data = page_obj.grabData()
+
+        response_data = {}
+        response_data['page'] = json.dumps(page)
+        response_data['data'] = json.dumps(data)
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+        
 def save_project(request):
     if request.method == 'POST':
         project_json = json.loads(request.POST.get('data'))

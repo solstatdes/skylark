@@ -95,3 +95,5 @@ STATICFILES_DIRS = (
     STATIC_PATH,
     )
 
+LIBRARY_PATH = os.path.join(STATIC_PATH, 'refractiveindex/database/')
+
