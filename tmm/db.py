@@ -1,10 +1,13 @@
 import yaml
 import json
+from numpy import linspace, sqrt
 
 class L:
 
     def __init__(self, path):
         self.data = []
+        self.N = 100
+        self.x_data = None
         self.path = path
         self.page = self.grabYml()
 
@@ -13,13 +16,57 @@ class L:
             page = yaml.load(f)
         return page 
         
-    def grabData(self):
+    def grabData(self, flag=True):
+        if flag==True:
+            for item in self.page.get('DATA', None):
+                type = item.get('type', None)
+                if type == 'tabulated k':
+                    data = self.tbk(item.get('data', None))
+                    self.x_data = data.get('x')
+                    self.N = len(data.get('x'))
+                    self.x_data = None
+                    flag = False
+                    try:
+                        data['n'] = (self.grabData(flag).get('n', None))
+                    except AttributeError:
+                        pass
+                    return data
+                
         for item in self.page.get('DATA', None):
             type = item.get('type', None)
+            if type == 'tabulated n':
+                data = self.tbn(item.get('data', None)) 
+                return data
             if type == 'tabulated nk':
                 data = self.tbnk(item.get('data', None)) 
                 return data
+            elif type == 'formula 1':
+                coeffs = item.get('coefficients', None)
+                wlrange = item.get('range', None)
+                data = self.f1(coeffs, wlrange)
+                return data
+            elif type == 'formula 2':
+                coeffs = item.get('coefficients', None)
+                wlrange = item.get('range', None)
+                data = self.f2(coeffs, wlrange)
+                return data
+            elif type == 'formula 3':
+                coeffs = item.get('coefficients', None)
+                wlrange = item.get('range', None)
+                data = self.f3(coeffs, wlrange)
+                return data
+                
 
+    def tbn(self, data):
+        data = data.split('\n')
+        data.pop()
+        data = [row.split(' ') for row in data]
+        data_dict = {}
+        data_dict['x'] = [float(row[0]) for row in data]
+        data_dict['n'] = [float(row[1]) for row in data]
+
+        return data_dict
+        
     def tbnk(self, data):
         data = data.split('\n')
         data.pop()
@@ -30,7 +77,74 @@ class L:
         data_dict['k'] = [float(row[2]) for row in data]
 
         return data_dict
+
+    def tbk(self, data):
+        data = data.split('\n')
+        data.pop()
+        data = [row.split(' ') for row in data]
+        data_dict = {}
+        data_dict['x'] = [float(row[0]) for row in data]
+        data_dict['k'] = [float(row[1]) for row in data]
+
+        return data_dict
+
+    def f1(self, coeffs, wlrange):
+        coeffs = map(float, coeffs.split())
+        wlrange = map(float, wlrange.split())
+        if self.x_data:
+            x = self.x_data
+        else:
+            x = linspace(wlrange[0], wlrange[1],self.N)
+        n = []
+        for i in range(0, self.N):
+            sum = 0
+            for j in range(1, len(coeffs)-1,2):
+                sum += (coeffs[j]*x[i]**2)/(x[i]**2 - coeffs[j+1]**2)
+            sum += coeffs[0]
+            n.append(sqrt(sum+1))
+
+        data_dict = {}
+        data_dict['x'] = x.tolist()
+        data_dict['n'] = n
+
+        return data_dict
+
+    def f2(self, coeffs, wlrange):
+        coeffs = map(float, coeffs.split())
+        wlrange = map(float, wlrange.split())
+        if self.x_data:
+            x = self.x_data
+        else:
+            x = linspace(wlrange[0], wlrange[1],self.N)
+        n = []
+        for i in range(0, self.N):
+            sum = 0
+            for j in range(1, len(coeffs)-1,2):
+                sum += (coeffs[j]*x[i]**2)/(x[i]**2 - coeffs[j+1])
+            sum += coeffs[0]
+            n.append(sqrt(sum+1))
+
+        data_dict = {}
+        data_dict['x'] = x.tolist()
+        data_dict['n'] = n
+        return data_dict 
         
+    def f3(self, coeffs, wlrange):
+        coeffs = map(float, coeffs.split())
+        wlrange = map(float, wlrange.split())
+        x = linspace(wlrange[0], wlrange[1], self.N)
+        n = []
+        for i in range(0, self.N):
+            sum = 0
+            for j in range(1, len(coeffs)-1,2):
+                sum += coeffs[j]*x[i]**coeffs[j+1]
+            sum += coeffs[0]
+            n.append(sqrt(sum))
+        data_dict = {}
+        data_dict['x'] = x.tolist()
+        data_dict['n'] = n
+        return data_dict 
+
     def dummy():
         count = 0
         if flag:
@@ -68,50 +182,7 @@ class L:
              else:
                  return "Can't do this yet"
              return data
-    def f1(self, coeffs, wlrange):
-        coeffs = map(float, coeffs.split())
-        wlrange = map(float, wlrange.split())
-        if self.x_data:
-            x = self.x_data
-        else:
-            x = linspace(wlrange[0], wlrange[1],self.N)
-        n = []
-        for i in range(0, self.N):
-            sum = 0
-            for j in range(1, len(coeffs)-1,2):
-                sum += (coeffs[j]*x[i]**2)/(x[i]**2 - coeffs[j+1]**2)
-            sum += coeffs[0]
-            n.append(sqrt(sum+1))
-        return x, n
 
-    def f2(self, coeffs, wlrange):
-        coeffs = map(float, coeffs.split())
-        wlrange = map(float, wlrange.split())
-        if self.x_data:
-            x = self.x_data
-        else:
-            x = linspace(wlrange[0], wlrange[1],self.N)
-        n = []
-        for i in range(0, self.N):
-            sum = 0
-            for j in range(1, len(coeffs)-1,2):
-                sum += (coeffs[j]*x[i]**2)/(x[i]**2 - coeffs[j+1])
-            sum += coeffs[0]
-            n.append(sqrt(sum+1))
-        return x, n
-    def f3(self, coeffs, wlrange):
-        coeffs = map(float, coeffs.split())
-        wlrange = map(float, wlrange.split())
-        x = linspace(wlrange[0], wlrange[1], self.N)
-        n = []
-        for i in range(0, self.N):
-            sum = 0
-            for j in range(1, len(coeffs)-1,2):
-                sum += coeffs[j]*x[i]**coeffs[j+1]
-            sum += coeffs[0]
-            n.append(sqrt(sum))
-        return x, n
-    
     def f4(self, coeffs, wlrange):
         coeffs = map(float, coeffs.split())
         wlrange = map(float, wlrange.split())
@@ -145,11 +216,3 @@ class L:
         return x, n
     
 
-    def tbk(self, data):
-        data = data.split('\n')
-        data.pop()
-        data = [row.split(' ') for row in data]
-        x = [float(row[0]) for row in data]
-        k = [float(row[1]) for row in data]
-
-        return x, k

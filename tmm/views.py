@@ -33,13 +33,13 @@ def lib_page(request):
         with open(page_path, 'r') as f:
             page = yaml.load(f)
 
-        # create page object using db
-        #page_obj = db.L(page_path)
-        #data = page_obj.grabData()
+        #create page object using db
+        page_obj = db.L(page_path)
+        data = page_obj.grabData()
 
         response_data = {}
         response_data['page'] = json.dumps(page)
-        #response_data['data'] = json.dumps(data)
+        response_data['data'] = json.dumps(data)
         return HttpResponse(
             json.dumps(response_data),
             content_type="application/json"

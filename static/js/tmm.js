@@ -75,14 +75,13 @@ $(function() {
     });
 
     function setLibpage(result) {
-        libpage = result;
-        console.log(libpage.page)
-        object = parseJSON(libpage.page)
-        references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+object.REFERENCES+"</p></div></div>";
-        comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+object.COMMENTS+"</p></div></div>";
-        data = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>Data type: "+object.DATA[0].type+"</p></div></div>";
+        page = parseJSON(result.page)
+        data = parseJSON(result.data)
+        console.log(data)
+        references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+page.REFERENCES+"</p></div></div>";
+        comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+page.COMMENTS+"</p></div></div>";
+        data = "<div class='subfolder'><p class='level2'><a>Data</a></p><div class='sbfolder'><p class='level3'>Data type: "+page.DATA[0].type+"</p></div></div>";
         $('#lib-page').html(references+comments+data);
-        console.log(object);
     }
 
     // AJAX for get page
