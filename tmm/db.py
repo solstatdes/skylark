@@ -6,7 +6,7 @@ class L:
 
     def __init__(self, path):
         self.data = []
-        self.N = 100
+        self.N = 1000
         self.x_data = None
         self.path = path
         self.page = self.grabYml()
@@ -54,6 +54,11 @@ class L:
                 coeffs = item.get('coefficients', None)
                 wlrange = item.get('range', None)
                 data = self.f3(coeffs, wlrange)
+                return data
+            elif type == 'formula 4':
+                coeffs = item.get('coefficients', None)
+                wlrange = item.get('range', None)
+                data = self.f4(coeffs, wlrange)
                 return data
                 
 
@@ -145,6 +150,26 @@ class L:
         data_dict['n'] = n
         return data_dict 
 
+    def f4(self, coeffs, wlrange):
+        coeffs = map(float, coeffs.split())
+        wlrange = map(float, wlrange.split())
+        x = linspace(wlrange[0], wlrange[1], self.N)
+        n = []
+        
+        for i in range(0, self.N):
+            sum = coeffs[0]
+            for j in range(1,8,4):
+                sum += (coeffs[j]*x[i]**coeffs[j+1])/(x[i]**2 - coeffs[j+2]**coeffs[j+3])
+            if len(coeffs)>9:
+                for k in range(9, len(coeffs)-1,2):
+                    sum += coeffs[k]*x[i]**coeffs[k+1]
+            n.append(sqrt(sqrt(sum**2)))
+
+        data_dict = {}
+        data_dict['x'] = x.tolist()
+        data_dict['n'] = n
+        return data_dict 
+
     def dummy():
         count = 0
         if flag:
@@ -183,21 +208,6 @@ class L:
                  return "Can't do this yet"
              return data
 
-    def f4(self, coeffs, wlrange):
-        coeffs = map(float, coeffs.split())
-        wlrange = map(float, wlrange.split())
-        x = linspace(wlrange[0], wlrange[1], self.N)
-        n = []
-        
-        for i in range(0, self.N):
-            sum = coeffs[0]
-            for j in range(1,8,4):
-                sum += (coeffs[j]*x[i]**coeffs[j+1])/(x[i]**2 - coeffs[j+2]**coeffs[j+3])
-            if len(coeffs)>9:
-                for k in range(9, len(coeffs)-1,2):
-                    sum += coeffs[k]*x[i]**coeffs[k+1]
-            n.append(sqrt(sqrt(sum**2)))
-        return x, n
 
     def f5(self, coeffs, wlrange):
         coeffs = map(float, coeffs.split())

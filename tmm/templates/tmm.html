@@ -15,7 +15,7 @@
         </section>
 
         <section class="">
-        <ul class="stack-list" id="stack">
+        <ul class="stack-list" id="stack"search>
         </ul>
         <form method="POST" id="save-form" name="{{project.pk}}">
             {% csrf_token %}
@@ -42,6 +42,17 @@
 
         <section class="feature-text">
           <h1>Library</h1>
+        </section>
+
+        <section id="library-search">
+
+            <div class="form-group">
+                <form method="post" id="search-form">
+                    <input type="text" id="search-text" class="text-field form-control validate-field required" data-validation-type="string" id="form-name" placeholder="" name="name">
+                    <br/>
+                     <button type="submit" class="btn btn-sm btn-outline-inverse">Search</button>
+                 </form>
+            </div>  
         </section>
 
         <section id="library-list">

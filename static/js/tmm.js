@@ -32,6 +32,7 @@ function parseBook(book) {
 
 function parseShelf(shelf) {
     var li = "";
+    console.log('hello');
     $.each(shelf.content, function(i, v) {
         if (v.content) {
             subul = parseBook(v.content);
@@ -49,14 +50,27 @@ function parseLibrary(library) {
     return li;
 }
 
+
 // Library search by "name"
+function parseSearch(result) {
+    li = "";
+    $.each(result, function(i, v) {
+        console.log('done');
+        subul = parseBook(v.content);
+        li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
+        console.log(li);
+        $('#library-list').html(li);
+    });
+
+}
+
 function librarySearch (library, key) {
     result = [];
-    main = library[0].content;
+    //main = library[0].content;
     $.each(library, function(i,w) {
         $.each(w.content, function(i,v) {
             try {
-                if (v.name.search(key) != -1) {
+                if (v.name.toLowerCase().search(key.toLowerCase()) != -1) {
                     result.push(v);
                 }
             } catch (e) {
@@ -64,7 +78,7 @@ function librarySearch (library, key) {
             }
         });
     });
-    return result;
+    parseSearch(result);
 };
 
 $(function() {
@@ -101,11 +115,14 @@ $(function() {
         });
     }
     
-    //Library Toggles
-    $(".subfolder p").click(function() {
-        $(this).siblings('.subfolder').toggle();
+    $("input[type='text']").on("click", function () {
+           $(this).select();
     });
 
+    //Library Toggles
+    $('body').on("click", ".subfolder p", function() {
+        $(this).siblings('.subfolder').toggle();
+    });
 
     // deleteFilm listener
     $('body').on("click", ".delete-layer", function() {
@@ -126,6 +143,7 @@ $(function() {
     // Save on submit
     $('#save-form').on('submit', function(event){ 
         event.preventDefault();
+        console.log('save')
         var project_id = $(this).attr('name')
         save_stack(config, project_id)
     });
@@ -145,6 +163,19 @@ $(function() {
             }
         });
     };
+
+    $('#search-form').on('submit', function(event){ 
+        event.preventDefault();
+        $(':focus').blur();
+        text = $('#search-text').val()
+        if (text == "") {
+            console.log('empty');
+        } else {
+            console.log('Searching ...')
+            librarySearch(library, text);
+        };
+        
+    });
 
 
        
