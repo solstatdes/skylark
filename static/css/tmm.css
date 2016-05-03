@@ -30,3 +30,18 @@ p.level4 {font-size: 0.5em;}
 section.output-text p {
     text-align: left;
 }
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+.searchbox {
+    padding:17px;padding-left:55px;width:300px;border:1px solid #f5f5f5;
+    font-size:13px;color:black;
+    background-image:url('http://i47.tinypic.com/r02vbq.png');
+    background-repeat:no-repeat;
+    background-position:left center;outline:0;
+}
