@@ -15,77 +15,105 @@ function parseJSON (jsonstr) {
 
 function listStack (config) {
     $('#stack').empty();
+    $('#stack').append("<li>"+config.input+" (substrate) - <a class='change-input film-operation' id='change-input'>change</a></li>");
     for (item in config.stack) {
         var layer = config.stack[item];
-        $('#stack').append("<li>"+layer.layer+", "+layer.d+" - <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
+        $('#stack').prepend("<li>"+layer.layer+", "+layer.d+" - <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
     };
 };
 
 function parseBook(book) {
     var li="";
     $.each(book, function(i, v) {
-        li+="<div class='subfolder'><p id='"+v.path+"' class='level3'><a>"+v.name+"</a> - <a class='libadd'>add</a></p></div>";
+        if (v.path) {
+            pathstr = v.path.replace(/\s/g,"!!");
+            console.log('erk'+pathstr+' split=');
+            li+="<div class='subfolder'><p id='"+pathstr+"' class='level3'><a>"+v.name+"</a> - <a id="+pathstr+" class='libadd'>add</a></p></div>";
+        }
+        else {
+            console.log('error')
+        }
     });
-    return li;
+return li;
 }
 
 
 function parseShelf(shelf) {
-    var li = "";
-    console.log('hello');
-    $.each(shelf.content, function(i, v) {
-        if (v.content) {
-            subul = parseBook(v.content);
-            li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
-        }
-    });
-    return li;
+var li = "";
+console.log('hello');
+$.each(shelf.content, function(i, v) {
+    if (v.content) {
+        subul = parseBook(v.content);
+        li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
+    }
+});
+return li;
 }
 function parseLibrary(library) {
-    var li = "";
-    $.each(library, function(i, v) {
-        subul = parseShelf(v)
-        li += "<div class='subfolder'><p class='level1' id='"+v.SHELF+"'><a>"+v.name+"</a></p>"+subul+"</div>";
-    });
-    return li;
+var li = "";
+$.each(library, function(i, v) {
+    subul = parseShelf(v)
+    li += "<div class='subfolder'><p class='level1' id='"+v.SHELF+"'><a>"+v.name+"</a></p>"+subul+"</div>";
+});
+return li;
 }
 
 
 // Library search by "name"
 function parseSearch(result) {
-    li = "";
-    $.each(result, function(i, v) {
-        console.log('done');
-        subul = parseBook(v.content);
-        li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
-        console.log(li);
-        $('#library-list').html(li);
-    });
+li = "";
+$.each(result, function(i, v) {
+    console.log('done');
+    subul = parseBook(v.content);
+    li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
+    console.log(li);
+    $('#library-list').html(li);
+});
 
 }
 
 function librarySearch (library, key) {
-    result = [];
-    //main = library[0].content;
-    $.each(library, function(i,w) {
-        $.each(w.content, function(i,v) {
-            try {
-                if (v.name.toLowerCase().search(key.toLowerCase()) != -1) {
-                    result.push(v);
-                }
-            } catch (e) {
-                console.log(e instanceof TypeError);
+result = [];
+//main = library[0].content;
+$.each(library, function(i,w) {
+    $.each(w.content, function(i,v) {
+        try {
+            if (v.name.toLowerCase().search(key.toLowerCase()) != -1) {
+                result.push(v);
             }
-        });
+        } catch (e) {
+            console.log(e instanceof TypeError);
+        }
     });
-    parseSearch(result);
+});
+parseSearch(result);
 };
+
+$(function() {
+//add layer listenter
+$('body').on("click", ".libadd", function() {
+    var path = $(this).attr('id');
+    console.log(path);
+    addLayer(path);
+});
+
+function addLayer (path) {
+    splitstr = path.split("/").reverse();
+        console.log(splitstr[1]);
+        console.log(splitstr);
+        console.log('film is being added');
+        config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
+        listStack(config);
+    }
+});
+
 
 $(function() {
     // Library page listener
     $('body').on("click", ".level3", function() {
         var path = $(this).attr('id');
-        libPage(path);
+        newpath = path.replace("!!", " ");
+        libPage(newpath);
     });
 
     function setLibpage(result) {
@@ -103,7 +131,6 @@ $(function() {
 
     // AJAX for get page
     function libPage (path) {
-        console.log(path);
         $.ajax({
             url   :"lib_page/", //endpoint
             type  :"POST", // http method
