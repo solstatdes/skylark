@@ -45,3 +45,9 @@ section.output-text p {
     background-repeat:no-repeat;
     background-position:left center;outline:0;
 }
+
+#library-list, #lib-page {
+    max-height: 425px;
+    overflow-y:auto;
+    overflow-x:none;
+}

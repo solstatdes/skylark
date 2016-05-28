@@ -1,66 +1,54 @@
- {% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block sidebar %}
-<li id="menu-item-text" class="menu-item scroll"><a href="#library-page">Library</a></li>
-{% endblock %}
-
 {% block content %}
-<article id="intro" class="section-wrapper clearfix" data-custom-background-img="{% static 'images/other_images/bg1.jpg' %}">
-  <div class="content-wrapper clearfix">
-    <div class="col-sm-10 col-md-9 pull-right">
 
-        <section class="feature-text">
-          <h1>Transfer Matrix Model</h1>
-        </section>
+<div class="container">
+<!--
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
 
-        <section class="">
-        <ul class="stack-list" id="stack"search>
-        </ul>
-        <form method="POST" id="save-form" name="{{project.pk}}">
-            {% csrf_token %}
-            <div>
-            </div>
-            <input type="submit" class="link-scroll btn btn-outline-inverse btn-lg" value="Save">
-        </form>
+            <h1>Transfer Matrix Model</h1>
 
-        
-        </section>
+            <ul class="stack-list" id="stack">
+            </ul>
 
+            <form method="POST" id="save-form" name="{{project.pk}}">
+                {% csrf_token %}
+                <div>
+                </div>
+                <input type="submit" class="link-scroll btn btn-outline-inverse btn-lg" value="Save">
+            </form>
 
-    </div><!-- .col-sm-10 -->
-  </div><!-- .content-wrapper -->
-</article><!-- .section-wrapper -->
-
-<article id="library-page" class="section-wrapper clearfix" data-custom-background-img="{% static 'images/other_images/bg1.jpg' %}">
-  <div class="full-wrapper clearfix">
-    <div class="col-sm-10 col-md-6 left">
-
-        <section class="feature-text">
-          <h1>Library</h1>
-        </section>
-
-        <section id="library-search">
-
-            <div class="form-group" >
-                <form method="post" id="search-form">
-                    <input type="text" style="max-width: 300px" id="search-text" class="text-field form-control validate-field required searchbox" data-validation-type="string" id="form-name" placeholder="" name="name">
-                 </form>
-            </div>  
-        </section>
-        </br>
-        <section id="library-list">
-             <button type="submit" id="browse" class="btn btn-sm btn-outline-inverse">Browse</button>
-        </section>
-
-
-    </div><!-- .col-sm-10 -->
-    <div class="col-sm-10 col-md-6">
-    <section class="output-text" id="lib-page">
-    </section>
+        </div>
     </div>
-  </div><!-- .content-wrapper -->
-</article><!-- .section-wrapper -->
+-->
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+            <h1>Library</h1>
+
+            <div id="library-search">
+                <div class="form-group" >
+                    <form method="post" id="search-form">
+                        <input type="text" style="max-width: 300px" id="search-text" class="text-field form-control validate-field required searchbox" data-validation-type="string" id="form-name" placeholder="" name="name">
+                     </form>
+                </div>  
+            </div>
+
+            <div class="col-md-5" id="library-list">
+                <button type="submit" id="browse" class="btn btn-sm btn-outline-inverse">Browse</button>
+            </div>
+
+            <div class="col-md-7">
+                <div class="col-lg-12" id="lib-page">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 {% endblock %}
 
 {% block script %}
@@ -80,6 +68,16 @@
     var libpage = new Object();
 
     //var key = new RegExp(/Telluride/i)
+
+    x = 0;
+    $(document).ready(function(){
+        $(window).resize(function(){
+            if (libpage.data != null) {
+                plot();
+            }
+
+        });
+    });
     </script>
 
 {% endblock %}
