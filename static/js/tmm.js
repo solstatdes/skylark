@@ -90,12 +90,15 @@ $(function() {
 
     function setLibpage(result) {
         page = parseJSON(result.page)
-        data = parseJSON(result.data)
-        console.log(data)
+        //data = parseJSON(result.data)
+        libpage = result;
+        //console.log(data)
+        chart = "<div id='lib-page-chart'></div>"
         references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+page.REFERENCES+"</p></div></div>";
         comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+page.COMMENTS+"</p></div></div>";
         data = "<div class='subfolder'><p class='level2'><a>Data</a></p><div class='sbfolder'><p class='level3'>Data type: "+page.DATA[0].type+"</p></div></div>";
-        $('#lib-page').html(references+comments+data);
+        $('#lib-page').html(chart+references+comments+data);
+        plot();
     }
 
     // AJAX for get page
