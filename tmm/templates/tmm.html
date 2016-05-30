@@ -4,14 +4,16 @@
 {% block content %}
 
 <div class="container">
-<!--
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
 
-            <h1>Transfer Matrix Model</h1>
+            <h1>Output</h1>
 
-            <ul class="stack-list" id="stack">
-            </ul>
+            <div class="col-sm-8" id='out-page-chart'></div>
+
+            <div class="col-sm-4">
+                <ul class="stack-list list-unstyled" id="stack">
+                </ul>
 
             <form method="POST" id="save-form" name="{{project.pk}}">
                 {% csrf_token %}
@@ -19,10 +21,10 @@
                 </div>
                 <input type="submit" class="link-scroll btn btn-outline-inverse btn-lg" value="Save">
             </form>
+            </div>
 
         </div>
     </div>
--->
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
 

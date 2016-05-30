@@ -126,7 +126,8 @@ $(function() {
         comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+page.COMMENTS+"</p></div></div>";
         data = "<div class='subfolder'><p class='level2'><a>Data</a></p><div class='sbfolder'><p class='level3'>Data type: "+page.DATA[0].type+"</p></div></div>";
         $('#lib-page').html(chart+references+comments+data);
-        plot();
+        plot(libpage, 'lib-page-chart');
+        plot(libpage, 'out-page-chart');
     }
 
     // AJAX for get page

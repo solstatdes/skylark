@@ -47,7 +47,7 @@ section.output-text p {
 }
 
 #library-list, #lib-page {
-    max-height: 425px;
+    max-height: 480px;
     overflow-y:auto;
     overflow-x:none;
 }
