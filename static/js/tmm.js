@@ -15,7 +15,7 @@ function parseJSON (jsonstr) {
 
 function listStack (config) {
     $('#stack').empty();
-    $('#stack').append("<li>"+config.input+" (substrate) - <a class='change-input film-operation' id='change-input'>change</a></li>");
+    $('#stack').append("<li>"+config.input.layer+" (substrate) - <a class='change-input film-operation' id='change-input'>change</a></li>");
     for (item in config.stack) {
         var layer = config.stack[item];
         $('#stack').prepend("<li>"+layer.layer+", "+layer.d+" - <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
