@@ -21,6 +21,7 @@ class L:
             for item in self.page.get('DATA', None):
                 type = item.get('type', None)
                 if type == 'tabulated k':
+                    print 'check'
                     data = self.tbk(item.get('data', None))
                     self.x_data = data.get('x')
                     self.N = len(data.get('x'))
@@ -59,6 +60,11 @@ class L:
                 coeffs = item.get('coefficients', None)
                 wlrange = item.get('range', None)
                 data = self.f4(coeffs, wlrange)
+                return data
+            elif type == 'formula 5':
+                coeffs = item.get('coefficients', None)
+                wlrange = item.get('range', None)
+                data = self.f5(coeffs, wlrange)
                 return data
                 
 
@@ -170,11 +176,33 @@ class L:
         data_dict['n'] = n
         return data_dict 
 
+    def f5(self, coeffs, wlrange):
+        print 'triggered f5'
+        coeffs = map(float, coeffs.split())
+        wlrange = map(float, wlrange.split())
+        if self.x_data:
+            x = self.x_data
+        else:
+            x = linspace(wlrange[0], wlrange[1],self.N)
+        n = []
+        for i in range(0, self.N):
+            sum = 0
+            for j in range(1, len(coeffs)-1,2):
+                sum += coeffs[j]*x[i]**coeffs[j+1]
+            sum += coeffs[0]
+            n.append(sum)
+
+        data_dict = {}
+        data_dict['x'] = x.tolist()
+        data_dict['n'] = n
+        return data_dict 
+
     def dummy():
         count = 0
         if flag:
             for item in self.page.get('DATA'):
                 if item['type']=='tabulated k':
+                    print 'check'
                     data = list(self.tbk(item['data']))
                     N = self.N
                     self.x_data = data[0]
@@ -209,20 +237,5 @@ class L:
              return data
 
 
-    def f5(self, coeffs, wlrange):
-        coeffs = map(float, coeffs.split())
-        wlrange = map(float, wlrange.split())
-        if self.x_data:
-            x = self.x_data
-        else:
-            x = linspace(wlrange[0], wlrange[1],self.N)
-        n = []
-        for i in range(0, self.N):
-            sum = 0
-            for j in range(1, len(coeffs)-1,2):
-                sum += coeffs[j]*x[i]**coeffs[j+1]
-            sum += coeffs[0]
-            n.append(sum)
-        return x, n
     
 

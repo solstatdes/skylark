@@ -35,7 +35,7 @@ function plot (dataset, target) {
                          .range([padding, w-padding]);
 
     var yScale = d3.scale.linear()
-                         .domain([d3.min(data, function(d) { return d[1];}), d3.max(data, function(d) { return d[1]; })])
+                         .domain([d3.min(data, function(d) { return d.slice(-1)[0];}), d3.max(data, function(d) { return d.slice(-1)[0]; })])
                          .range([h-padding, padding]);
 
 
@@ -64,7 +64,7 @@ function plot (dataset, target) {
            return xScale(d[0]);
        })
        .attr("cy", function(d) {
-           return yScale(d[1]);
+           return yScale(d.slice(-1)[0]);
        })
        .attr("r", 3)
        .style("fill", "blue");
@@ -90,7 +90,7 @@ function plot (dataset, target) {
         console.log('trying to plot');
 
         var yScaleRight = d3.scale.linear()
-                             .domain([d3.min(data, function(d) { return d[2];}), d3.max(data, function(d) { return d[2]; })])
+                             .domain([d3.min(data, function(d) { return d[1];}), d3.max(data, function(d) { return d[1]; })])
                              .range([h-padding, padding]);
 
         var yAxisRight = d3.svg.axis()
@@ -106,7 +106,7 @@ function plot (dataset, target) {
                return xScale(d[0]);
            })
            .attr("cy", function(d) {
-               return yScaleRight(d[2]);
+               return yScaleRight(d[1]);
            })
            .attr("r", 3)
            .style("fill", "red");
