@@ -32,11 +32,11 @@ function plot (dataset, target) {
 
     var xScale = d3.scale.linear()
                          .domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })])
-                         .range([padding, w-padding]);
+                         .range([padding, w-padding*2]);
 
     var yScale = d3.scale.linear()
                          .domain([d3.min(data, function(d) { return d.slice(-1)[0];}), d3.max(data, function(d) { return d.slice(-1)[0]; })])
-                         .range([h-padding, padding]);
+                         .range([h-padding*2, padding]);
 
 
 
@@ -72,7 +72,7 @@ function plot (dataset, target) {
        
     svg.append("g")
        .attr("class", "axis")
-       .attr("transform", "translate(0," + (h-padding) + ")")
+       .attr("transform", "translate(0," + (h-padding*2) + ")")
        .call(xAxis);
 
     svg.append("g")
@@ -85,13 +85,24 @@ function plot (dataset, target) {
        .attr("transform", "translate(" + padding + ",0)")
        .call(yAxis);
 
+    svg.append("text")
+       .attr("text-anchor", "middle")
+       .attr("transform", "translate("+(w/1.5) + "," + (h-padding)+")")
+       .text("Wavelength (micron)");
+
+    svg.append("text")
+       .attr("text-anchor", "middle") 
+       .attr("transform", "translate("+ padding/10 +","+(h/2)+")")
+       .text("n")
+       .style("fill", "blue");
+
 
     if (parseJSON(dataset.data).k) {
         console.log('trying to plot');
 
         var yScaleRight = d3.scale.linear()
                              .domain([d3.min(data, function(d) { return d[1];}), d3.max(data, function(d) { return d[1]; })])
-                             .range([h-padding, padding]);
+                             .range([h-padding*2, padding]);
 
         var yAxisRight = d3.svg.axis()
                           .scale(yScaleRight)
@@ -113,8 +124,14 @@ function plot (dataset, target) {
            
         svg.append("g")
            .attr("class", "axis")
-           .attr("transform", "translate("+ (w-padding) + ",0)")
+           .attr("transform", "translate("+ (w-padding*2) + ",0)")
            .call(yAxisRight);
+        
+        svg.append("text")
+           .attr("text-anchor", "middle") 
+           .attr("transform", "translate("+ (w-(padding*1.2)) +","+(h/2)+")")
+           .text("k")
+           .style("fill", "red");
     }
 
     

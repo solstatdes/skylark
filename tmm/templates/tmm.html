@@ -63,13 +63,14 @@
     //initiate
     var config = parseJSON("{{project.json}}");
     var library = parseJSON("{{library}}");
-    console.log(library);
+    var nRepo = "{{nRepo}}"
+
     listStack(config);
+
     var html  = parseLibrary(library);
     $('#library-list').html(html);
     var libpage = new Object();
 
-    //var key = new RegExp(/Telluride/i)
 
     x = 0;
     $(document).ready(function(){

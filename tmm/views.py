@@ -8,6 +8,9 @@ import os
 from django.conf import settings
 import db
 
+def getN(project):
+    return 'Hello knobhead'
+
 
 def home(request):
     projects = Project.objects.all()
@@ -21,10 +24,12 @@ def home(request):
 
     project.json = json.dumps(project.json)
     library = json.dumps(library)
+
+    nRepo = getN(project)
     
     
 
-    return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library})
+    return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library, 'nRepo': nRepo})
 
 def lib_page(request):
     if request.method == 'POST':
@@ -72,5 +77,9 @@ def save_project(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
+    
+
+
 
 

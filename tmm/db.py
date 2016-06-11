@@ -2,6 +2,7 @@ import yaml
 import json
 from numpy import linspace, sqrt
 
+#create a library class
 class L:
 
     def __init__(self, path):
