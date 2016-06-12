@@ -7,10 +7,55 @@ import yaml
 import os
 from django.conf import settings
 import db
+import numpy as np
+from scipy import interpolate
 
-def getN(project):
-    return 'Hello knobhead'
+def N_interp(repo, wlRange):
+    N = {}
+    N['x'] = np.linspace(min(wlRange), max(wlRange), 50)
+    for item in repo.keys():
+        n = np.array(repo.get(item).get('n', None))
+        k = np.array(repo.get(item).get('k'))
+        try:
+            len(k)
+        except:
+            k = np.array([0]*(len(n)))
+        x = np.array(repo.get(item).get('x'))
+        fn = interpolate.interp1d(x, n)
+        fk = interpolate.interp1d(x, k)
+        N[item] = {'n': list(fn(N.get('x'))), 'k': list(fk(N.get('x')))}
+    N['x'] = list(N['x'])
+    return N
 
+def get_limits(repo):
+    mins = []
+    maxs = []
+    keys = repo.keys()
+    for item in keys:
+        mins.append(min(repo.get(item).get('x')))
+        maxs.append(max(repo.get(item).get('x')))
+    return [max(mins), min(maxs)]
+
+def get_paths(json, nRepo):
+    if json.get('path', None):
+        stub = json.get('path')
+        if nRepo.get(json.get('path'), None):
+            next
+        else:
+            path = os.path.join(settings.LIBRARY_PATH, stub)
+            page_data = db.L(path.replace('!!', ' ')).grabData()
+            nRepo[stub] = page_data
+    else:
+        for item in json:
+            if isinstance(json.get(item), dict):
+                try:
+                    get_paths(json.get(item), nRepo)
+                except:
+                    continue
+            elif isinstance(json.get(item), list):
+                for item in json.get(item):
+                    get_paths(item, nRepo)
+    
 
 def home(request):
     projects = Project.objects.all()
@@ -22,14 +67,18 @@ def home(request):
     with open(path, 'r') as f:
         library = yaml.load(f)
 
+    nRepo = {}
+    get_paths(project.json, nRepo)
+    wlRange = get_limits(nRepo)
+    print wlRange
+    N = N_interp(nRepo, wlRange)
+
     project.json = json.dumps(project.json)
     library = json.dumps(library)
 
-    nRepo = getN(project)
     
     
-
-    return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library, 'nRepo': nRepo})
+    return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library, 'N':json.dumps(N)})
 
 def lib_page(request):
     if request.method == 'POST':
