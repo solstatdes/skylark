@@ -3,9 +3,7 @@
 function transpose (data) {
     dataJson = parseJSON(data.data);
     array = [];
-    console.log(dataJson);
     for (var key in dataJson) {
-        console.log(key);
         array.push(dataJson[key]);
      }
     //array = [parseJSON(data.data).x, parseJSON(data.data).n, parseJSON(data.data).k]
@@ -19,7 +17,6 @@ function transpose (data) {
 
 // PLOT LIBPAGE DATA
 function plot (dataset, target) {
-    console.log(target);
     data = transpose(dataset)
     $('#'+target).empty();
     w = $('#'+target).width();
@@ -98,7 +95,6 @@ function plot (dataset, target) {
 
 
     if (parseJSON(dataset.data).k) {
-        console.log('trying to plot');
 
         var yScaleRight = d3.scale.linear()
                              .domain([d3.min(data, function(d) { return d[1];}), d3.max(data, function(d) { return d[1]; })])

@@ -27,12 +27,14 @@ function parseBook(book) {
     $.each(book, function(i, v) {
         if (v.path) {
             pathstr = v.path.replace(/\s/g,"!!");
-            console.log('erk'+pathstr+' split=');
             li+="<div class='subfolder'><p id='"+pathstr+"' class='level3'><a>"+v.name+"</a> - <a id="+pathstr+" class='libadd'>add</a></p></div>";
         }
+        /*
         else {
-            console.log('error')
+            //console.log('error')
+
         }
+        */
     });
 return li;
 }
@@ -40,7 +42,6 @@ return li;
 
 function parseShelf(shelf) {
 var li = "";
-console.log('hello');
 $.each(shelf.content, function(i, v) {
     if (v.content) {
         subul = parseBook(v.content);
@@ -66,7 +67,6 @@ $.each(result, function(i, v) {
     console.log('done');
     subul = parseBook(v.content);
     li+="<div class='subfolder'><p class='level2'><a>"+v.name+"</a></p>"+subul+"</div>";
-    console.log(li);
     $('#library-list').html(li);
 });
 
@@ -93,19 +93,46 @@ $(function() {
 //add layer listenter
 $('body').on("click", ".libadd", function() {
     var path = $(this).attr('id');
-    console.log(path);
     addLayer(path);
 });
 
 function addLayer (path) {
     splitstr = path.split("/").reverse();
-        console.log(splitstr[1]);
-        console.log(splitstr);
         console.log('film is being added');
         config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
         listStack(config);
+        updateN(path);
     }
 });
+
+function updateN(path) {
+    console.log("I'm updating N with "+path);
+    if (typeof N[path] == "undefined") {
+        console.log(N[path])
+        console.log(path)
+        //ajax to get new N
+        console.log('need some ajax here');
+        addLayerAjax(path, config)
+        N[path] = 'dummy'
+    } else {
+        console.log('yup');
+    }
+}
+
+function addLayerAjax(path, config) {
+    console.log(config['configuration']);
+    $.ajax({
+        url   :"add_layer/", //endpoint
+        type  :"POST", // http method
+        data  : {path:path, data:JSON.stringify(config)}, // data send with post request
+        success :function(json) {
+            console.log('success addLayerAjax');
+        },
+        error: function(xhr,errmsg,err) {
+            console.log(xhr,status + ": " + xhr.responseText);
+        }
+    });
+}
 
 
 $(function() {
@@ -120,7 +147,6 @@ $(function() {
         page = parseJSON(result.page)
         //data = parseJSON(result.data)
         libpage = result;
-        //console.log(data)
         chart = "<div id='lib-page-chart'></div>"
         references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+page.REFERENCES+"</p></div></div>";
         comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+page.COMMENTS+"</p></div></div>";
@@ -186,7 +212,6 @@ $(function() {
             type  :"POST", // http method
             data  : {data:JSON.stringify(config), id:project_id}, // data send with post request
             success :function(json) {
-                console.log(json);
                 console.log('success');
             },
             error: function(xhr,errmsg,err) {
