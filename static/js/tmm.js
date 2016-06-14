@@ -113,7 +113,6 @@ function updateN(path) {
         //ajax to get new N
         console.log('need some ajax here');
         addLayerAjax(path, config)
-        N[path] = 'dummy'
     } else {
         console.log('yup');
     }
@@ -127,6 +126,7 @@ function addLayerAjax(path, config) {
         data  : {path:path, data:JSON.stringify(config)}, // data send with post request
         success :function(json) {
             console.log('success addLayerAjax');
+            N = parseJSON(json.N)
         },
         error: function(xhr,errmsg,err) {
             console.log(xhr,status + ": " + xhr.responseText);

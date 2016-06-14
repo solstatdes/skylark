@@ -19,7 +19,7 @@ def home(request):
     with open(path, 'r') as f:
         library = yaml.load(f)
 
-    new_stack = Stack(project, settings.LIBRARY_PATH)
+    new_stack = Stack(project.json, settings.LIBRARY_PATH)
 
     project.json = json.dumps(project.json)
     library = json.dumps(library)
@@ -31,9 +31,12 @@ def home(request):
 def add_layer(request):
     if request.method == 'POST':
         config = json.loads(request.POST.get('data'))
-        print config
+        new_stack = Stack(config, settings.LIBRARY_PATH)
+        response_data = {}
+        response_data['N'] = json.dumps(new_stack.N)
+        
         return HttpResponse(
-            json.dumps({'dummy': 'data'}),
+            json.dumps(response_data),
             content_type="application/json"
         )
     else:

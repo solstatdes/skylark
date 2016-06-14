@@ -9,7 +9,7 @@ class Stack():
         self.project = project
         self.library_path = library_path
         self.repo = {}
-        self.get_paths(project.json)
+        self.get_paths(project)
         self.N = self.N_interp(self.get_limits())
 
     def N_interp(self, wlRange):
