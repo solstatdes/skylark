@@ -106,26 +106,20 @@ function addLayer (path) {
 });
 
 function updateN(path) {
-    console.log("I'm updating N with "+path);
     if (typeof N[path] == "undefined") {
-        console.log(N[path])
-        console.log(path)
         //ajax to get new N
-        console.log('need some ajax here');
-        addLayerAjax(path, config)
+        updateNAjax(config)
     } else {
         console.log('yup');
     }
 }
 
-function addLayerAjax(path, config) {
-    console.log(config['configuration']);
+function updateNAjax(config) {
     $.ajax({
         url   :"add_layer/", //endpoint
         type  :"POST", // http method
-        data  : {path:path, data:JSON.stringify(config)}, // data send with post request
+        data  : {data:JSON.stringify(config)}, // data send with post request
         success :function(json) {
-            console.log('success addLayerAjax');
             N = parseJSON(json.N)
         },
         error: function(xhr,errmsg,err) {
@@ -191,10 +185,22 @@ $(function() {
 
     // deleteFilm function
     function deleteFilm(id) {
+        path = config.stack[id].path;
         config.stack.splice(id, 1);
+        //if there are no other films
+        var flag = false;
+        $.each(config.stack, function(i,w) {
+            if (config.stack[i].path == path) {
+                listStack(config);
+                console.log('check');
+                flag = true;
+            }
+        });
+        if (flag == false) {
+            updateN(config);
+            console.log('N repo updated');
+        }
         listStack(config);
-
-        
     }
 
     // Save on submit
