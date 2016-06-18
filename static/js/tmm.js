@@ -1,32 +1,40 @@
-
 // Stack Class
+
 function Stack(config, N){
+
+    this.matrixElement = function(i) {
+        label = this.config.stack[i].path;
+        console.log(label);
+        n = this.N[label].n;
+        k = this.N[label].k;
+        N=[]
+        $.each(n, function(j, v) {
+            N.push(math.complex(v, k[j]));
+        });
+        matrix = N
+        return matrix
+    };
+
+    this.matrixBuild = function(){
+        M = [];
+        $.each(this.config.stack, function(i, obj) {
+            //M.push(this.matrixElement(i));
+            M.push(this.matrixElement(i));
+        }.bind(this));
+        return M;
+    };
+
+    this.updateN = function(path) {
+        updateNAjax(this);
+    };
+
     this.config = config;
     this.N = N;
-}
+    this.M = this.matrixBuild();
 
-// Stack methods
+};
 
-Stack.prototype.matrix = function(i) {
-    label = this.config.stack[i].path;
-    n = this.N[label].n;
-    k = this.N[label].k;
-    N=[]
-    $.each(n, function(j, v) {
-        N.push(math.complex(v, k[j]));
-    });
-    return N
-}
 
-Stack.prototype.updateN = function(path) {
-    console.log('path = '+path)
-    if (typeof this.N[path] == "undefined") {
-        //ajax to get new N
-        updateNAjax(this)
-    } else {
-        console.log('data already present');
-    }
-}
 
 
 
@@ -130,21 +138,12 @@ $('body').on("click", ".libadd", function() {
 function addLayer (stack, path) {
     splitstr = path.split("/").reverse();
         console.log('film is being added');
-        //config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
         stack.config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
         listStack(stack.config);
         stack.updateN(path);
     }
 });
 
-function updateN(path) {
-    if (typeof N[path] == "undefined") {
-        //ajax to get new N
-        updateNAjax(config)
-    } else {
-        console.log('yup');
-    }
-}
 
 function updateNAjax(stack) {
     $.ajax({
@@ -153,6 +152,7 @@ function updateNAjax(stack) {
         data  : {data:JSON.stringify(stack.config)}, // data send with post request
         success :function(json) {
             stack.N = parseJSON(json.N)
+            stack.M = stack.matrixBuild();
         },
         error: function(xhr,errmsg,err) {
             console.log(xhr,status + ": " + xhr.responseText);
@@ -218,21 +218,23 @@ $(function() {
     // deleteFilm function
     function deleteFilm(stack, id) {
         path = stack.config.stack[id].path;
-        console.log(path);
         stack.config.stack.splice(id, 1);
+        /*
         //if there are no other films
         var flag = false;
         $.each(stack.config.stack, function(i,w) {
             if (stack.config.stack[i].path == path) {
-                listStack(stack.config);
-                console.log('check');
+                //listStack(stack.config);
                 flag = true;
+                stack.updateN();
             }
         });
         if (flag == false) {
             stack.updateN();
             console.log('N repo updated');
         }
+        */
+        stack.updateN();
         listStack(stack.config);
     }
 
