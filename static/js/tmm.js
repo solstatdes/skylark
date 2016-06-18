@@ -1,4 +1,34 @@
-// initiate html
+
+// Stack Class
+function Stack(config, N){
+    this.config = config;
+    this.N = N;
+}
+
+// Stack methods
+
+Stack.prototype.matrix = function(i) {
+    label = this.config.stack[i].path;
+    n = this.N[label].n;
+    k = this.N[label].k;
+    N=[]
+    $.each(n, function(j, v) {
+        N.push(math.complex(v, k[j]));
+    });
+    return N
+}
+
+Stack.prototype.updateN = function(path) {
+    console.log('path = '+path)
+    if (typeof this.N[path] == "undefined") {
+        //ajax to get new N
+        updateNAjax(this)
+    } else {
+        console.log('data already present');
+    }
+}
+
+
 
 // converts unicode json string from django to json object
 function parseJSON (jsonstr) {
@@ -93,15 +123,17 @@ $(function() {
 //add layer listenter
 $('body').on("click", ".libadd", function() {
     var path = $(this).attr('id');
-    addLayer(path);
+    addLayer(project, path);
+    
 });
 
-function addLayer (path) {
+function addLayer (stack, path) {
     splitstr = path.split("/").reverse();
         console.log('film is being added');
-        config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
-        listStack(config);
-        updateN(path);
+        //config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
+        stack.config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
+        listStack(stack.config);
+        stack.updateN(path);
     }
 });
 
@@ -114,13 +146,13 @@ function updateN(path) {
     }
 }
 
-function updateNAjax(config) {
+function updateNAjax(stack) {
     $.ajax({
         url   :"add_layer/", //endpoint
         type  :"POST", // http method
-        data  : {data:JSON.stringify(config)}, // data send with post request
+        data  : {data:JSON.stringify(stack.config)}, // data send with post request
         success :function(json) {
-            N = parseJSON(json.N)
+            stack.N = parseJSON(json.N)
         },
         error: function(xhr,errmsg,err) {
             console.log(xhr,status + ": " + xhr.responseText);
@@ -179,28 +211,29 @@ $(function() {
     $('body').on("click", ".delete-layer", function() {
         var id = $(this).attr('id');
         var suffix = id.match(/\d+/)[0];
-        deleteFilm(suffix);
+        deleteFilm(project, suffix);
     });
 
 
     // deleteFilm function
-    function deleteFilm(id) {
-        path = config.stack[id].path;
-        config.stack.splice(id, 1);
+    function deleteFilm(stack, id) {
+        path = stack.config.stack[id].path;
+        console.log(path);
+        stack.config.stack.splice(id, 1);
         //if there are no other films
         var flag = false;
-        $.each(config.stack, function(i,w) {
-            if (config.stack[i].path == path) {
-                listStack(config);
+        $.each(stack.config.stack, function(i,w) {
+            if (stack.config.stack[i].path == path) {
+                listStack(stack.config);
                 console.log('check');
                 flag = true;
             }
         });
         if (flag == false) {
-            updateN(config);
+            stack.updateN();
             console.log('N repo updated');
         }
-        listStack(config);
+        listStack(stack.config);
     }
 
     // Save on submit
