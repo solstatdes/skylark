@@ -1,42 +1,132 @@
-// Stack Class
+//Global Methods
+function multiply(A, B) {
+    C = [];
+    $.each(A, function(i) {
+        C.push(math.multiply(A[i],B[i]));
+    });
+    return C
+}
 
+function divide(A, B) {
+    C = [];
+    $.each(A, function(i) {
+        C.push(math.divide(A[i],B[i]));
+    });
+    return C
+}
+// Stack Class
 function Stack(config, N){
 
     this.matrixElement = function(i) {
+        Adm = this.Adm;
         label = this.config.stack[i].path;
-        console.log(label);
+        
+        //Get layer thickness (in micron)
+        d = this.config.stack[i].d/1000;
+
+        //Get wavelength values (in micron) 
+        x = this.N.x
+
         n = this.N[label].n;
         k = this.N[label].k;
-        N=[]
+
+        element = [];
+            
         $.each(n, function(j, v) {
-            N.push(math.complex(v, k[j]));
+            //Get complex N
+            N = math.complex(v, k[j]); //Create a complex refractive index
+            NAdm = math.multiply(N, Adm); //Calculate admittance
+            phase = math.multiply(math.divide(N, x[j]), (d*math.pi*2)); //Calculate phase
+            //Calculate matrix elements
+            A = math.cos(phase);
+            B = math.divide(math.multiply(math.complex(0,1), math.sin(phase)), NAdm);
+            C = math.multiply(math.multiply(math.complex(0,1),math.sin(phase)), NAdm);
+            D = math.cos(phase);
+            //Append 2x2 matrix to list
+            element.push(math.matrix([[A, B],[ C, D]]));
         });
-        matrix = N
-        return matrix
+
+        return element
+
     };
 
     this.matrixBuild = function(){
         M = [];
         $.each(this.config.stack, function(i, obj) {
-            //M.push(this.matrixElement(i));
             M.push(this.matrixElement(i));
         }.bind(this));
         return M;
+    };
+
+    this.matrixMult = function() {
+        array = this.M.slice();
+        I = math.matrix([[1,0],[0,1]]); //Identity matrix
+        M = Array.apply(null, Array(this.N.x.length)).map(Array.prototype.valueOf, I); //Initiate array of length N with I
+        if (this.config.configuration == 'substrate') {
+            array.reverse();
+        };
+
+        //DOUBLE RAINBOW ALL THE WAY!
+        //Loop through stack 
+        $.each(array, function(i, matrix) {
+            // Loop through wavelengths
+            $.each(matrix, function(j) {
+                M[j] = math.multiply(M[j], matrix[j]);
+            });
+        });
+
+        return M;
+    };
+
+    this.calcStack = function() {
+        //Define substrate matrix
+        M = this.matrixMult();
+
+        substrate = this.config.output.path;
+        console.log(substrate);
+
+        nSub = this.N[substrate].n;
+        kSub = this.N[substrate].k;
+
+        NSubArr = [];
+        YSubArr = [];
+        Y = [];
+        BCArr = [];
+
+        $.each(n, function(i, v) {
+            NSub = math.complex(nSub[i],kSub[i]);
+
+            YSub = math.multiply(NSub, this.Adm);
+            Y = math.matrix([1, YSub]);
+
+
+            if (this.config.configuration == 'substrate') {
+                BC = math.multiply(M[i], Y);
+            } else {
+                BC = math.multiply(Y, M[i]);
+            };
+
+            NSubArr.push(NSub);    
+            YSubArr.push(YSub);
+            BCArr.push(BC);
+
+        }.bind(this));
+        console.log(BCArr);
     };
 
     this.updateN = function(path) {
         updateNAjax(this);
     };
 
+    this.Adm = 2.6544e-3 //Admittance of free space
     this.config = config;
+    this.theta = 0;
     this.N = N;
     this.M = this.matrixBuild();
+    //this.calcT();
+    //this.calcR();
 
 };
-
-
-
-
 
 // converts unicode json string from django to json object
 function parseJSON (jsonstr) {
@@ -243,7 +333,7 @@ $(function() {
         event.preventDefault();
         console.log('save')
         var project_id = $(this).attr('name')
-        save_stack(config, project_id)
+        save_stack(project.config, project_id)
     });
 
     // AJAX for save
