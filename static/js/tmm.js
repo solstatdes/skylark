@@ -70,9 +70,12 @@ function Stack(config, N){
         //Loop through stack 
         $.each(array, function(i, matrix) {
             // Loop through wavelengths
+            M = multiply(M, matrix);
+            /*
             $.each(matrix, function(j) {
                 M[j] = math.multiply(M[j], matrix[j]);
             });
+            */
         });
 
         return M;
@@ -83,25 +86,39 @@ function Stack(config, N){
         M = this.matrixMult();
 
         substrate = this.config.output.path;
-        console.log(substrate);
+        input = this.config.input.path;
 
         nSub = this.N[substrate].n;
         kSub = this.N[substrate].k;
 
+        nIn = this.N[input].n;
+        kIn = this.N[input].k;
+
         NSubArr = [];
         YSubArr = [];
+        NInArr = [];
         Y = [];
+        T = [];
+        R = [];
         BCArr = [];
 
         $.each(n, function(i, v) {
             NSub = math.complex(nSub[i],kSub[i]);
+            NIn = math.complex(nIn[i], kIn[i]);
 
             YSub = math.multiply(NSub, this.Adm);
             Y = math.matrix([1, YSub]);
-
+            YIn = math.multiply(NIn, this.Adm);
 
             if (this.config.configuration == 'substrate') {
                 BC = math.multiply(M[i], Y);
+                B = BC._data[0];
+                C = BC._data[1];;
+                TTop = math.multiply(YIn, 4*YSub.re);
+                TBot = math.add(math.multiply(YIn, B), C);
+                TBotConj = math.conj(TBot);
+                T = math.divide(TTop, math.multiply(TBot, TBotConj));
+                console.log(T);
             } else {
                 BC = math.multiply(Y, M[i]);
             };
@@ -111,8 +128,14 @@ function Stack(config, N){
             BCArr.push(BC);
 
         }.bind(this));
-        console.log(BCArr);
+
+
     };
+
+    this.hello = function() {
+        console.log('hello');
+    }
+
 
     this.updateN = function(path) {
         updateNAjax(this);
