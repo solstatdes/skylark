@@ -33,6 +33,7 @@ function Stack(config, N){
         element = [];
             
         $.each(n, function(j, v) {
+            
             //Get complex N
             N = math.complex(v, k[j]); //Create a complex refractive index
             NAdm = math.multiply(N, Adm); //Calculate admittance
@@ -68,17 +69,23 @@ function Stack(config, N){
 
         //DOUBLE RAINBOW ALL THE WAY!
         //Loop through stack 
+        count = 0;
         $.each(array, function(i, matrix) {
             // Loop through wavelengths
+            
             M = multiply(M, matrix);
+            console.log('in = '+matrix+', out = '+M);
+            count += 1;
             /*
             $.each(matrix, function(j) {
                 M[j] = math.multiply(M[j], matrix[j]);
             });
             */
         });
+        console.log(M);
 
         return M;
+        
     };
 
     this.calcStack = function() {
@@ -117,8 +124,7 @@ function Stack(config, N){
                 TTop = math.multiply(YIn, 4*YSub.re);
                 TBot = math.add(math.multiply(YIn, B), C);
                 TBotConj = math.conj(TBot);
-                T = math.divide(TTop, math.multiply(TBot, TBotConj));
-                console.log(T);
+                T.push(math.divide(TTop, math.multiply(TBot, TBotConj)).re);
             } else {
                 BC = math.multiply(Y, M[i]);
             };
@@ -129,7 +135,8 @@ function Stack(config, N){
 
         }.bind(this));
 
-
+        return {'x': this.N.x,
+                'T': T}
     };
 
     this.hello = function() {
@@ -146,8 +153,7 @@ function Stack(config, N){
     this.theta = 0;
     this.N = N;
     this.M = this.matrixBuild();
-    //this.calcT();
-    //this.calcR();
+    this.T = this.calcStack();
 
 };
 
@@ -291,8 +297,7 @@ $(function() {
         comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+page.COMMENTS+"</p></div></div>";
         data = "<div class='subfolder'><p class='level2'><a>Data</a></p><div class='sbfolder'><p class='level3'>Data type: "+page.DATA[0].type+"</p></div></div>";
         $('#lib-page').html(chart+references+comments+data);
-        plot(libpage, 'lib-page-chart');
-        plot(libpage, 'out-page-chart');
+        plot(libpage, 'nk', 'lib-page-chart');
     }
 
     // AJAX for get page
