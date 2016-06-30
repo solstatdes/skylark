@@ -2,12 +2,9 @@
 
 function transpose (data, type) {
     if (type == 'nk') {
-        console.log(type);
         dataJson = parseJSON(data.data);
-        console.log(dataJson);
     } else {
         dataJson = data;
-        console.log(dataJson);
     };
     array = [];
     for (var key in dataJson) {
@@ -29,6 +26,9 @@ function plot (dataset, type, target) {
     w = $('#'+target).width();
     h = (0.75*w);
     var padding = 40;
+
+    d3.select("#"+target).selectAll("svg").remove();
+
     var svg=d3.select("#"+target)
               .append("svg:svg")
               .attr("width", w)
@@ -38,9 +38,18 @@ function plot (dataset, type, target) {
                          .domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })])
                          .range([padding, w-padding*2]);
 
-    var yScale = d3.scale.linear()
-                         .domain([d3.min(data, function(d) { return d.slice(-1)[0];}), d3.max(data, function(d) { return d.slice(-1)[0]; })])
-                         .range([h-padding*2, padding]);
+    
+    if (type == 'nk') {
+        var yScale = d3.scale.linear()
+                             .domain([d3.min(data, function(d) { return d.slice(-1)[0];}), d3.max(data, function(d) { return d.slice(-1)[0]; })])
+                             .range([h-padding*2, padding]);
+    };
+
+    if (type == 'TR') {
+        var yScale = d3.scale.linear()
+                             .domain([0,1])
+                             .range([h-padding*2, padding]);
+    };
 
 
 
@@ -48,6 +57,7 @@ function plot (dataset, type, target) {
     var xAxis = d3.svg.axis()
                       .scale(xScale)
                       .orient("bottom");
+
     
     var xAxisTop = d3.svg.axis()
                       .scale(xScale)

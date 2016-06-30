@@ -35,7 +35,7 @@ function Stack(config, N){
         $.each(n, function(j, v) {
             
             //Get complex N
-            N = math.complex(v, k[j]); //Create a complex refractive index
+            N = math.complex(v, -k[j]); //Create a complex refractive index
             NAdm = math.multiply(N, Adm); //Calculate admittance
             phase = math.multiply(math.divide(N, x[j]), (d*math.pi*2)); //Calculate phase
             //Calculate matrix elements
@@ -52,11 +52,13 @@ function Stack(config, N){
     };
 
     this.matrixBuild = function(){
+        console.log('Building Matrix');
         M = [];
         $.each(this.config.stack, function(i, obj) {
+            console.log('matrixBuild layer = '+i);
             M.push(this.matrixElement(i));
         }.bind(this));
-        return M;
+        this.M = M;
     };
 
     this.matrixMult = function() {
@@ -69,20 +71,11 @@ function Stack(config, N){
 
         //DOUBLE RAINBOW ALL THE WAY!
         //Loop through stack 
-        count = 0;
         $.each(array, function(i, matrix) {
             // Loop through wavelengths
-            
             M = multiply(M, matrix);
-            console.log('in = '+matrix+', out = '+M);
-            count += 1;
-            /*
-            $.each(matrix, function(j) {
-                M[j] = math.multiply(M[j], matrix[j]);
-            });
-            */
+            console.log('layer = '+i)
         });
-        console.log(M);
 
         return M;
         
@@ -91,6 +84,7 @@ function Stack(config, N){
     this.calcStack = function() {
         //Define substrate matrix
         M = this.matrixMult();
+        console.log(M[25]);
 
         substrate = this.config.output.path;
         input = this.config.input.path;
@@ -109,7 +103,9 @@ function Stack(config, N){
         R = [];
         BCArr = [];
 
-        $.each(n, function(i, v) {
+        count = 0;
+
+        $.each(nIn, function(i, v) {
             NSub = math.complex(nSub[i],kSub[i]);
             NIn = math.complex(nIn[i], kIn[i]);
 
@@ -120,11 +116,19 @@ function Stack(config, N){
             if (this.config.configuration == 'substrate') {
                 BC = math.multiply(M[i], Y);
                 B = BC._data[0];
-                C = BC._data[1];;
-                TTop = math.multiply(YIn, 4*YSub.re);
+                C = BC._data[1];
+                TTop = math.multiply(math.multiply(4,YIn), YSub.re);
                 TBot = math.add(math.multiply(YIn, B), C);
                 TBotConj = math.conj(TBot);
                 T.push(math.divide(TTop, math.multiply(TBot, TBotConj)).re);
+                if (i == 25) {
+                    console.log(M[i]);
+                    console.log(Y);
+                    console.log(BC);
+                    console.log(B);
+                    console.log(C);
+                }
+
             } else {
                 BC = math.multiply(Y, M[i]);
             };
@@ -136,7 +140,7 @@ function Stack(config, N){
         }.bind(this));
 
         return {'x': this.N.x,
-                'T': T}
+                'T': T};
     };
 
     this.hello = function() {
@@ -152,7 +156,7 @@ function Stack(config, N){
     this.config = config;
     this.theta = 0;
     this.N = N;
-    this.M = this.matrixBuild();
+    this.matrixBuild();
     this.T = this.calcStack();
 
 };
@@ -271,7 +275,9 @@ function updateNAjax(stack) {
         data  : {data:JSON.stringify(stack.config)}, // data send with post request
         success :function(json) {
             stack.N = parseJSON(json.N)
-            stack.M = stack.matrixBuild();
+            stack.matrixBuild();
+            plot(stack.calcStack(), 'TR', 'out-page-chart');
+
         },
         error: function(xhr,errmsg,err) {
             console.log(xhr,status + ": " + xhr.responseText);
