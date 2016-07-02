@@ -22,6 +22,14 @@
                 <input type="submit" class="link-scroll btn btn-outline-inverse btn-lg" value="Save">
             </form>
             </div>
+                <input
+                    name=Slider
+                    type="range"
+                    max="1000"                  // default 100
+                    step="1"                   // default 1
+                >
+            <div>
+            </div>
 
         </div>
     </div>
@@ -70,8 +78,9 @@
     //const project = new Stack(config);
     var project = new Stack(parseJSON("{{project.json}}"), parseJSON("{{N}}"));
     listStack(project.config);
+    var layerID = null;
+    var layerD = null;
     plot(project.T, 'TR', 'out-page-chart');
-
 
     x = 0;
     $(document).ready(function(){

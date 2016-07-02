@@ -179,7 +179,7 @@ function listStack (config) {
     $('#stack').append("<li>"+config.input.layer+" (substrate) - <a class='change-input film-operation' id='change-input'>change</a></li>");
     for (item in config.stack) {
         var layer = config.stack[item];
-        $('#stack').prepend("<li>"+layer.layer+", "+layer.d+" - <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
+        $('#stack').prepend("<li class='layer' id='layer"+item+"'>"+layer.layer+", "+layer.d+" - <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
     };
 };
 
@@ -400,6 +400,29 @@ $(function() {
 
 
        
-})
+});
+
+
+$(function() {
+    // stack click listener
+    $('body').on("click", ".layer", function() {
+        layerId = parseInt($(this).attr('id').replace('layer', ''));
+        layerD = project.config.stack[layerId].d;
+        $('input[name=Slider]').val(layerD).change();
+        //var path = $(this).attr('id');
+        //newpath = path.replace("!!", " ");
+        //libPage(newpath);
+    });
+
+});
+
+$('input[name=Slider]').on("change mousemove", function() {
+    d = $(this).val();
+    console.log($(this).val());
+    project.config.stack[layerId].d = $(this).val();
+    project.M[layerId] = project.matrixElement(layerId);
+    plot(project.calcStack(), 'TR', 'out-page-chart');
+    listStack(project.config);
+});
 
 
