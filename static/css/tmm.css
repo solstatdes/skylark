@@ -51,3 +51,9 @@ section.output-text p {
     overflow-y:auto;
     overflow-x:none;
 }
+.layer {
+    cursor: pointer;
+}
+.highlight {
+    font-weight: bold;
+}

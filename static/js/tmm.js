@@ -52,10 +52,8 @@ function Stack(config, N){
     };
 
     this.matrixBuild = function(){
-        console.log('Building Matrix');
         M = [];
         $.each(this.config.stack, function(i, obj) {
-            console.log('matrixBuild layer = '+i);
             M.push(this.matrixElement(i));
         }.bind(this));
         this.M = M;
@@ -74,7 +72,6 @@ function Stack(config, N){
         $.each(array, function(i, matrix) {
             // Loop through wavelengths
             M = multiply(M, matrix);
-            console.log('layer = '+i)
         });
 
         return M;
@@ -84,7 +81,6 @@ function Stack(config, N){
     this.calcStack = function() {
         //Define substrate matrix
         M = this.matrixMult();
-        console.log(M[25]);
 
         substrate = this.config.output.path;
         input = this.config.input.path;
@@ -136,10 +132,6 @@ function Stack(config, N){
                 'R': R};
     };
 
-    this.hello = function() {
-        console.log('hello');
-    }
-
 
     this.updateN = function(path) {
         updateNAjax(this);
@@ -182,11 +174,16 @@ function listStack (config) {
         } else {
             var up = '';
         };
+        if (layerId == item) {
+            var highlight = 'highlight';
+        } else {
+            var highlight = '';
+        };
 
         var dup = "<a class='dup-layer film-operation' id='dup-layer-"+item+"'>copy</a>";
 
         var layer = config.stack[item];
-        $('#stack').prepend("<li class='layer' id='layer"+item+"'>"+layer.layer+", "+layer.d+" - "+up+" "+down+" "+dup+"  <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
+        $('#stack').prepend("<li class='layer "+highlight+"' id='layer"+item+"'>"+layer.layer+", "+layer.d+" - "+up+" "+down+" "+dup+"  <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
     };
 };
 
@@ -338,13 +335,6 @@ $(function() {
         $(this).siblings('.subfolder').toggle();
     });
 
-    // deleteFilm listener
-    $('body').on("click", ".delete-layer", function() {
-        var id = $(this).attr('id');
-        var suffix = id.match(/\d+/)[0];
-        deleteFilm(project, suffix);
-    });
-
 
     // deleteFilm function
     function deleteFilm(stack, id) {
@@ -410,12 +400,18 @@ $(function() {
 });
 
 
+function sliderUpdate() {
+    $('input[name=Slider]').val(layerD).change();
+    console.log('triggered');
+};
+
 $(function() {
     // stack click listener
     $('body').on("click", ".layer", function() {
+        
         layerId = parseInt($(this).attr('id').replace('layer', ''));
         layerD = project.config.stack[layerId].d;
-        $('input[name=Slider]').val(layerD).change();
+        sliderUpdate();
         //var path = $(this).attr('id');
         //newpath = path.replace("!!", " ");
         //libPage(newpath);
@@ -425,7 +421,6 @@ $(function() {
 
 $('input[name=Slider]').on("change mousemove", function() {
     d = $(this).val();
-    console.log($(this).val());
     project.config.stack[layerId].d = $(this).val();
     project.M[layerId] = project.matrixElement(layerId);
     plotTR(project.calcStack(), 'TR', 'out-page-chart');
@@ -440,6 +435,73 @@ function incSlider(dir) {
         var val = math.subtract($('input[name=Slider]').val(), 1);
         $('input[name=Slider]').val(val).change();
     };
+    
+};
+// deletefilm listener
+$('body').on("click", ".delete-layer", function() {
+    var id = $(this).attr('id');
+    var suffix = id.match(/\d+/)[0];
+    deletefilm(project, suffix);
+});
+
+// upfilm listener
+$('body').on("click", ".up-layer", function() {
+    var id = $(this).attr('id');
+    var suffix = id.match(/\d+/)[0];
+    moveFilm(project, suffix, 'up');
+});
+
+// downfilm listener
+$('body').on("click", ".down-layer", function() {
+    var id = $(this).attr('id');
+    var suffix = id.match(/\d+/)[0];
+    movefilm(project, suffix, 'down');
+});
+
+// movefilm function
+function moveFilm (stack, id, dir) {
+    if (dir == 'up') {
+        if (stack.config.stack[id+1]) {
+            var temp = stack.config.stack[id];
+            stack.config.stack[id] = stack.config.stack[id+1];
+            stack.config.stack[id+1] = temp;
+            layerId += 1;
+            listStack(stack.config);
+            stack.matrixBuild();
+            plotTR(stack.calcStack(), 'TR', 'out-page-chart');
+        } else {
+            console.log("You've reached the top!");
+        };
+    } else {
+        if (stack.config.stack[id-1]) {
+            var temp = stack.config.stack[id];
+            stack.config.stack[id] = stack.config.stack[id-1];
+            stack.config.stack[id-1] = temp;
+            layerId -= 1;
+            listStack(stack.config);
+            stack.matrixBuild();
+            plotTR(stack.calcStack(), 'TR', 'out-page-chart');
+        } else {
+            console.log("You've reached the bottom!");
+        };
+        console.log('move film '+id+ ' down');
+    };
+};
+
+function selectFilm(stack, id, dir) {
+    if (dir == 'up') {
+        if (stack.config.stack[id+1]) {
+            layerId += 1;
+            layerD = project.config.stack[layerId].d;
+            sliderUpdate();
+        };
+    } else {
+        if (stack.config.stack[id-1]) {
+            layerId -= 1;
+            layerD = project.config.stack[layerId].d;
+            sliderUpdate();
+        };
+    };
 };
 
 $(document).keydown(function(e) {
@@ -449,6 +511,11 @@ $(document).keydown(function(e) {
         break;
 
         case 38: // up
+            if (e.shiftKey) {
+                moveFilm(project, layerId, 'up');
+            } else {
+                selectFilm(project, layerId, 'up');
+            };
         break;
 
         case 39: // right
@@ -456,6 +523,11 @@ $(document).keydown(function(e) {
         break;
 
         case 40: // down
+            if (e.shiftKey) {
+                moveFilm(project, layerId, 'down');
+            } else {
+                selectFilm(project, layerId, 'down');
+            };
         break;
 
         default: return; // exit this handler for other keys

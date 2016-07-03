@@ -77,8 +77,8 @@
     var libpage = new Object();
     //const project = new Stack(config);
     var project = new Stack(parseJSON("{{project.json}}"), parseJSON("{{N}}"));
+    var layerId = null;
     listStack(project.config);
-    var layerID = null;
     var layerD = null;
     plotTR(project.T, 'TR', 'out-page-chart');
 
