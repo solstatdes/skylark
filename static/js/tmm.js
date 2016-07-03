@@ -398,6 +398,14 @@ $(function() {
         moveFilm(project, suffix, 'up');
         flag = true;
     });
+    // downfilm listener
+    $('body').on("click", ".down-layer", function() {
+        var id = $(this).attr('id');
+        var suffix = id.match(/\d+/)[0];
+        layerId = suffix;
+        moveFilm(project, suffix, 'down');
+        flag = true;
+    });
     // stack click listener
     $('body').on("click", ".layer", function() {
         if (flag == true) {
@@ -435,12 +443,6 @@ function incSlider(dir, inc) {
 };
 
 
-// downfilm listener
-$('body').on("click", ".down-layer", function() {
-    var id = $(this).attr('id');
-    var suffix = id.match(/\d+/)[0];
-    movefilm(project, suffix, 'down');
-});
 // deleteFilm function
 function deleteFilm(stack, id) {
     path = stack.config.stack[id].path;
