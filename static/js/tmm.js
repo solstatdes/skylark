@@ -336,28 +336,6 @@ $(function() {
     });
 
 
-    // deleteFilm function
-    function deleteFilm(stack, id) {
-        path = stack.config.stack[id].path;
-        stack.config.stack.splice(id, 1);
-        /*
-        //if there are no other films
-        var flag = false;
-        $.each(stack.config.stack, function(i,w) {
-            if (stack.config.stack[i].path == path) {
-                //listStack(stack.config);
-                flag = true;
-                stack.updateN();
-            }
-        });
-        if (flag == false) {
-            stack.updateN();
-            console.log('N repo updated');
-        }
-        */
-        stack.updateN();
-        listStack(stack.config);
-    }
 
     // Save on submit
     $('#save-form').on('submit', function(event){ 
@@ -402,19 +380,37 @@ $(function() {
 
 function sliderUpdate() {
     $('input[name=Slider]').val(layerD).change();
-    console.log('triggered');
 };
 
 $(function() {
+    // deletefilm listener
+    $('body').on("click", ".delete-layer", function() {
+        var id = $(this).attr('id');
+        var suffix = id.match(/\d+/)[0];
+        deleteFilm(project, suffix);
+        flag = true;
+    });
+    // upfilm listener
+    $('body').on("click", ".up-layer", function() {
+        var id = $(this).attr('id');
+        var suffix = parseInt(id.match(/\d+/)[0]);
+        layerId = suffix;
+        moveFilm(project, suffix, 'up');
+        flag = true;
+    });
     // stack click listener
     $('body').on("click", ".layer", function() {
-        
-        layerId = parseInt($(this).attr('id').replace('layer', ''));
-        layerD = project.config.stack[layerId].d;
-        sliderUpdate();
-        //var path = $(this).attr('id');
-        //newpath = path.replace("!!", " ");
-        //libPage(newpath);
+        if (flag == true) {
+            flag = false;
+        } else {
+            
+            layerId = parseInt($(this).attr('id').replace('layer', ''));
+            layerD = project.config.stack[layerId].d;
+            sliderUpdate();
+            //var path = $(this).attr('id');
+            //newpath = path.replace("!!", " ");
+            //libPage(newpath);
+        };
     });
 
 });
@@ -427,29 +423,17 @@ $('input[name=Slider]').on("change mousemove", function() {
     listStack(project.config);
 });
 
-function incSlider(dir) {
+function incSlider(dir, inc) {
     if (dir == 'plus') {
-        var val = math.add($('input[name=Slider]').val(), 1);
+        var val = math.add($('input[name=Slider]').val(), inc);
         $('input[name=Slider]').val(val).change();
     } else {
-        var val = math.subtract($('input[name=Slider]').val(), 1);
+        var val = math.subtract($('input[name=Slider]').val(), inc);
         $('input[name=Slider]').val(val).change();
     };
     
 };
-// deletefilm listener
-$('body').on("click", ".delete-layer", function() {
-    var id = $(this).attr('id');
-    var suffix = id.match(/\d+/)[0];
-    deletefilm(project, suffix);
-});
 
-// upfilm listener
-$('body').on("click", ".up-layer", function() {
-    var id = $(this).attr('id');
-    var suffix = id.match(/\d+/)[0];
-    moveFilm(project, suffix, 'up');
-});
 
 // downfilm listener
 $('body').on("click", ".down-layer", function() {
@@ -457,6 +441,17 @@ $('body').on("click", ".down-layer", function() {
     var suffix = id.match(/\d+/)[0];
     movefilm(project, suffix, 'down');
 });
+// deleteFilm function
+function deleteFilm(stack, id) {
+    path = stack.config.stack[id].path;
+    layerId -= 1;
+    if (layerId < 0) {layerId = 0};
+    stack.config.stack.splice(id, 1);
+    stack.updateN();
+    console.log(id+' '+stack.config.stack.length);
+    listStack(stack.config);
+}
+
 
 // movefilm function
 function moveFilm (stack, id, dir) {
@@ -484,20 +479,19 @@ function moveFilm (stack, id, dir) {
         } else {
             console.log("You've reached the bottom!");
         };
-        console.log('move film '+id+ ' down');
     };
 };
 
 function selectFilm(stack, id, dir) {
     if (dir == 'up') {
         if (stack.config.stack[id+1]) {
-            layerId += 1;
+            layerId = 1 + id;
             layerD = project.config.stack[layerId].d;
             sliderUpdate();
         };
     } else {
         if (stack.config.stack[id-1]) {
-            layerId -= 1;
+            layerId = id -1;
             layerD = project.config.stack[layerId].d;
             sliderUpdate();
         };
@@ -507,7 +501,11 @@ function selectFilm(stack, id, dir) {
 $(document).keydown(function(e) {
     switch(e.which) {
         case 37: // left
-        incSlider('minus');
+            if (e.shiftKey) {
+                incSlider('minus', 20);
+            } else {
+                incSlider('minus', 1);
+            };
         break;
 
         case 38: // up
@@ -519,7 +517,11 @@ $(document).keydown(function(e) {
         break;
 
         case 39: // right
-        incSlider('plus');
+            if (e.shiftKey) {
+                incSlider('plus', 20);
+            } else {
+                incSlider('plus', 1);
+            };
         break;
 
         case 40: // down
@@ -528,6 +530,10 @@ $(document).keydown(function(e) {
             } else {
                 selectFilm(project, layerId, 'down');
             };
+        break;
+
+        case 68: //d
+            deleteFilm(project, layerId);
         break;
 
         default: return; // exit this handler for other keys
