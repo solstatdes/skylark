@@ -169,10 +169,24 @@ function parseJSON (jsonstr) {
 
 function listStack (config) {
     $('#stack').empty();
-    $('#stack').append("<li>"+config.input.layer+" (substrate) - <a class='change-input film-operation' id='change-input'>change</a></li>");
+    $('#stack').append("<li>"+config.input.layer+" (substrate)");
+
     for (item in config.stack) {
+        if (item != 0) {
+            var down = "<a class='down-layer film-operation' id='down-layer-"+item+"'>down</a>";
+        } else {
+            var down = '';
+        };
+        if (item != config.stack.length-1) {
+            var up = "<a class='up-layer film-operation' id='up-layer-"+item+"'>up</a>";
+        } else {
+            var up = '';
+        };
+
+        var dup = "<a class='dup-layer film-operation' id='dup-layer-"+item+"'>copy</a>";
+
         var layer = config.stack[item];
-        $('#stack').prepend("<li class='layer' id='layer"+item+"'>"+layer.layer+", "+layer.d+" - <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
+        $('#stack').prepend("<li class='layer' id='layer"+item+"'>"+layer.layer+", "+layer.d+" - "+up+" "+down+" "+dup+"  <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
     };
 };
 

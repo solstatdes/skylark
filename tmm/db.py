@@ -67,6 +67,11 @@ class L:
                 wlrange = item.get('range', None)
                 data = self.f5(coeffs, wlrange)
                 return data
+            elif type == 'formula 6':
+                coeffs = item.get('coefficients', None)
+                wlrange = item.get('range', None)
+                data = self.f2(coeffs, wlrange)
+                return data
                 
 
     def tbn(self, data):
