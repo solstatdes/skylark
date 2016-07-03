@@ -183,7 +183,7 @@ function listStack (config) {
         var dup = "<a class='dup-layer film-operation' id='dup-layer-"+item+"'>copy</a>";
 
         var layer = config.stack[item];
-        $('#stack').prepend("<li class='layer "+highlight+"' id='layer"+item+"'>"+layer.layer+", "+layer.d+" - "+up+" "+down+" "+dup+"  <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
+        $('#stack').prepend("<li class='layer "+highlight+"' id='layer"+item+"'>"+layer.layer+", "+layer.d+" </li>");//- "+up+" "+down+" "+dup+"  <a class='delete-layer film-operation' id='delete-layer-"+item+"'>delete</a></li>")// | <a class='up-layer'>up</a> | <a class='down-layer'>down</a></li>");
     };
 };
 
@@ -424,9 +424,11 @@ $(function() {
 });
 
 $('input[name=Slider]').on("change mousemove", function() {
+    console.log('trigger inc');
     d = $(this).val();
     project.config.stack[layerId].d = $(this).val();
-    project.M[layerId] = project.matrixElement(layerId);
+    //project.M[layerId] = project.matrixElement(layerId);
+    project.matrixBuild();
     plotTR(project.calcStack(), 'TR', 'out-page-chart');
     listStack(project.config);
 });
@@ -500,6 +502,21 @@ function selectFilm(stack, id, dir) {
     };
 };
 
+function copyFilm(stack, id, type) {
+    if (layerId != null) {
+        console.log('copy film working');
+        if (type == 'deep') {
+            var newObject = jQuery.extend(true, {}, stack.config.stack[id]) 
+        } else {
+            var newObject = stack.config.stack[id];
+        };
+        stack.config.stack.push(newObject);
+        listStack(stack.config);
+        stack.matrixBuild();
+        plotTR(stack.calcStack(), 'TR', 'out-page-chart');
+    };
+};
+
 $(document).keydown(function(e) {
     switch(e.which) {
         case 37: // left
@@ -534,8 +551,16 @@ $(document).keydown(function(e) {
             };
         break;
 
-        case 68: //d
+        case 68: //d - delete
             deleteFilm(project, layerId);
+        break;
+
+        case 67: //c - copy
+            copyFilm(project, layerId, 'deep');
+        break;
+
+        case 89: //y - linked copy
+            copyFilm(project, layerId, 'shallow');
         break;
 
         default: return; // exit this handler for other keys

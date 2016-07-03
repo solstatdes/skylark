@@ -14,7 +14,7 @@ class Stack():
 
     def N_interp(self, wlRange):
         N = {}
-        N['x'] = np.linspace(min(wlRange), max(wlRange), 50)
+        N['x'] = np.linspace(min(wlRange), max(wlRange), 200)
         for item in self.repo.keys():
             n = np.array(self.repo.get(item).get('n', None))
             k = np.array(self.repo.get(item).get('k'))
