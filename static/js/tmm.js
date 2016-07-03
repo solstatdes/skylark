@@ -432,4 +432,33 @@ $('input[name=Slider]').on("change mousemove", function() {
     listStack(project.config);
 });
 
+function incSlider(dir) {
+    if (dir == 'plus') {
+        var val = math.add($('input[name=Slider]').val(), 1);
+        $('input[name=Slider]').val(val).change();
+    } else {
+        var val = math.subtract($('input[name=Slider]').val(), 1);
+        $('input[name=Slider]').val(val).change();
+    };
+};
 
+$(document).keydown(function(e) {
+    switch(e.which) {
+        case 37: // left
+        incSlider('minus');
+        break;
+
+        case 38: // up
+        break;
+
+        case 39: // right
+        incSlider('plus');
+        break;
+
+        case 40: // down
+        break;
+
+        default: return; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
