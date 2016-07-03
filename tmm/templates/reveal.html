@@ -1,0 +1,78 @@
+{% extends "reveal_base.html" %}
+{% load static %}
+
+{% block output %}
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1">
+
+
+                    <div class="col-sm-8" id='out-page-chart'></div>
+
+                    <div class="col-sm-4">
+                        <ul class="stack-list list-unstyled" id="stack">
+                        </ul>
+
+                    <form method="POST" id="save-form" name="{{project.pk}}">
+                        {% csrf_token %}
+                        <div>
+                        </div>
+                        <input type="submit" class="link-scroll btn btn-outline-inverse btn-lg" value="Save">
+                    </form>
+                    </div>
+                        <input
+                            name=Slider
+                            type="range"
+                            max="1000"                  // default 100
+                            step="1"                   // default 1
+                        >
+                    <div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block library %}
+    <section>
+        slide 2
+    </section>
+{% endblock %}
+
+{% block script %}
+
+    <script src="{% static 'js/tmm.js' %}"></script>
+    <script src="{% static 'js/plot.js' %}"></script>
+    <script src="{% static 'js/ajax.js' %}"></script>
+
+    <script>
+    //initiate
+    var library = parseJSON("{{library}}");
+
+
+    var html  = parseLibrary(library);
+    $('#library-list').html(html);
+    var libpage = new Object();
+    //const project = new Stack(config);
+    var project = new Stack(parseJSON("{{project.json}}"), parseJSON("{{N}}"));
+    listStack(project.config);
+    var layerID = null;
+    var layerD = null;
+    plot(project.T, 'TR', 'out-page-chart');
+
+    x = 0;
+    $(document).ready(function(){
+        $(window).resize(function(){
+            if (libpage.data != null) {
+                plot();
+            }
+
+        });
+    });
+    </script>
+
+{% endblock %}
+

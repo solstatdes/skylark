@@ -121,26 +121,19 @@ function Stack(config, N){
                 TBot = math.add(math.multiply(YIn, B), C);
                 TBotConj = math.conj(TBot);
                 T.push(math.divide(TTop, math.multiply(TBot, TBotConj)).re);
-                if (i == 25) {
-                    console.log(M[i]);
-                    console.log(Y);
-                    console.log(BC);
-                    console.log(B);
-                    console.log(C);
-                }
 
+                RTop = math.subtract(math.multiply(YIn, B), C);
+                RFrac = math.divide(RTop, TBot)
+                R.push(math.multiply(RFrac, math.conj(RFrac)));
             } else {
                 BC = math.multiply(Y, M[i]);
             };
 
-            NSubArr.push(NSub);    
-            YSubArr.push(YSub);
-            BCArr.push(BC);
-
         }.bind(this));
 
         return {'x': this.N.x,
-                'T': T};
+                'T': T,
+                'R': R};
     };
 
     this.hello = function() {
@@ -276,7 +269,7 @@ function updateNAjax(stack) {
         success :function(json) {
             stack.N = parseJSON(json.N)
             stack.matrixBuild();
-            plot(stack.calcStack(), 'TR', 'out-page-chart');
+            plotTR(stack.calcStack(), 'TR', 'out-page-chart');
 
         },
         error: function(xhr,errmsg,err) {
@@ -421,7 +414,7 @@ $('input[name=Slider]').on("change mousemove", function() {
     console.log($(this).val());
     project.config.stack[layerId].d = $(this).val();
     project.M[layerId] = project.matrixElement(layerId);
-    plot(project.calcStack(), 'TR', 'out-page-chart');
+    plotTR(project.calcStack(), 'TR', 'out-page-chart');
     listStack(project.config);
 });
 
