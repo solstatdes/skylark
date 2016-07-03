@@ -67,6 +67,31 @@ function plotTR (dataset, type, target) {
                       .orient("right")
                       .ticks(5);
     
+    var transmittance = d3.svg.line()
+        .x(function(d) {return xScale(d[0]);})
+        .y(function(d) {return yScale(d[1]);})
+        .interpolate("basis");
+
+    svg.append("path")
+       .attr("d", transmittance(data))
+       .attr("stroke", "blue")
+       .attr("fill", "none");
+
+    var reflectance = d3.svg.line()
+        .x(function(d) {return xScale(d[0]);})
+        .y(function(d) {return yScaleRight(d[2]);})
+        .interpolate("basis");
+
+    svg.append("path")
+       .attr("d", transmittance(data))
+       .attr("stroke", "blue")
+       .attr("fill", "none");
+
+    svg.append("path")
+       .attr("d", reflectance(data))
+       .attr("stroke", "red")
+       .attr("fill", "none");
+
     svg.selectAll("circle")
        .data(data)
        .enter()
