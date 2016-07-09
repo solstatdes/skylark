@@ -3,15 +3,28 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container head">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+            <img class="logo" src="{% static 'images/skylark/logo.png' %}">
+            <p class="nav">
+
+                <a href="#stack-box">stack</a> &middot
+                <a href="">library</a> &middot
+                <a href="">feedback</a> &middot
+                <a href="">tutorial</a> 
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="stack-box">
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
 
-            <h1>Output</h1>
+            <div class="col-sm-9" id='out-page-chart'></div>
 
-            <div class="col-sm-8" id='out-page-chart'></div>
-
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <ul class="stack-list list-unstyled" id="stack">
                 </ul>
 
@@ -33,10 +46,11 @@
 
         </div>
     </div>
+<div>
+
+<div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-
-            <h1>Library</h1>
 
             <div id="library-search">
                 <div class="form-group" >

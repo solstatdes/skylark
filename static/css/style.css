@@ -1,0 +1,32 @@
+.row {
+    height: 100vh;
+}
+.container {
+    width:100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    height: 100vh;
+}
+.head img.logo {
+    width: 40%;
+    max-width: 300px;
+    margin: 5%;
+    margin-bottom: 0%;
+    padding-top: 5%;
+}
+
+.head {
+    background-color: #fff;
+    width: 100%;
+    text-align: center;
+}
+
+.head p.nav {
+    margin: 2%;
+    font-size: 1.4em;
+}
+
+.stack-list {
+    margin-top: 25px;
+}
+
