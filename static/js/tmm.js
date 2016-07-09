@@ -256,9 +256,11 @@ parseSearch(result);
 
 //body listnener
 $('body').on("click", "", function() {
+    console.log(this.id);
     console.log('hello world');
     layerId = null;
     listStack(project.config);
+    $('.stack-func').hide();
 });
 $(function() {
 //add layer listenter
@@ -389,6 +391,12 @@ function sliderUpdate() {
 };
 
 $(function() {
+    // stack function listener
+    $('body').on("click", ".stack-func", function(event) {
+        console.log('stack-func is clicked');
+        event.stopPropagation();
+    });
+
     // deletefilm listener
     $('body').on("click", ".delete-layer", function() {
         var id = $(this).attr('id');
@@ -414,6 +422,7 @@ $(function() {
     });
     // stack click listener
     $('body').on("click", ".layer", function(event) {
+        $('.stack-func').show();
         console.log('next');
         if (flag == true) {
             flag = false;
@@ -534,6 +543,7 @@ $(document).keydown(function(e) {
                     if (project.config.stack.length != 0) {
                         layerId = 0;
                         listStack(project.config);
+                        $('.stack-func').show();
                     };
                 };
             break;
@@ -589,6 +599,7 @@ $(document).keydown(function(e) {
             case 65: //a - deselect stack
                 layerId = null;
                 listStack(project.config);
+                $('.stack-func').hide();
             break;
 
             default: return; // exit this handler for other keys

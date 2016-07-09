@@ -14,6 +14,10 @@
     color: #AD0B0B;
 }
 
+.stack-func {
+    display: none;
+}
+
 
 .row {
     min-height: 90vh;
