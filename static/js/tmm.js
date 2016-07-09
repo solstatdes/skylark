@@ -161,7 +161,7 @@ function parseJSON (jsonstr) {
 
 function listStack (config) {
     $('#stack').empty();
-    $('#stack').append("<li>"+config.input.layer+" (substrate)");
+    $('#stack').append("<br/><li>"+config.input.layer+" (substrate)");
 
     for (item in config.stack) {
         if (item != 0) {

@@ -1,18 +1,36 @@
+.navbar-nav {
+    float: right;
+}
+.navbar-inverse {
+    background-color: #0D1379;
+    border-bottom: #AD0B0B 4px solid;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #fff;
+}
+
+.navbar-inverse .navbar-nav>li>a:hover {
+    color: #AD0B0B;
+}
+
+
 .row {
-    height: 100vh;
+    min-height: 90vh;
+    padding-top: 60px;
+    padding-bottom: 20px;
+    margin:20px;
+    overflow: hidden;
 }
 .container {
     width:100%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    height: 100vh;
 }
 .head img.logo {
     width: 40%;
     max-width: 300px;
     margin: 5%;
     margin-bottom: 0%;
-    padding-top: 5%;
+    padding-top: 8%;
 }
 
 .head {
