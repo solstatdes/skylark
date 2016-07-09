@@ -254,6 +254,12 @@ $.each(library, function(i,w) {
 parseSearch(result);
 };
 
+//body listnener
+$('body').on("click", "", function() {
+    console.log('hello world');
+    layerId = null;
+    listStack(project.config);
+});
 $(function() {
 //add layer listenter
 $('body').on("click", ".libadd", function() {
@@ -407,7 +413,8 @@ $(function() {
         flag = true;
     });
     // stack click listener
-    $('body').on("click", ".layer", function() {
+    $('body').on("click", ".layer", function(event) {
+        console.log('next');
         if (flag == true) {
             flag = false;
         } else {
@@ -419,12 +426,12 @@ $(function() {
             //newpath = path.replace("!!", " ");
             //libPage(newpath);
         };
+        event.stopPropagation();
     });
 
 });
 
 $('input[name=Slider]').on("change mousemove", function() {
-    console.log('trigger inc');
     d = $(this).val();
     project.config.stack[layerId].d = $(this).val();
     //project.M[layerId] = project.matrixElement(layerId);
@@ -518,52 +525,75 @@ function copyFilm(stack, id, type) {
 };
 
 $(document).keydown(function(e) {
-    switch(e.which) {
-        case 37: // left
-            if (e.shiftKey) {
-                incSlider('minus', 20);
-            } else {
-                incSlider('minus', 1);
-            };
-        break;
+    if (layerId == null) {
+        switch(e.which) {
+            case 83: // left
+                if (e.shiftKey) {
+                } else {
+                    //select stack
+                    if (project.config.stack.length != 0) {
+                        layerId = 0;
+                        listStack(project.config);
+                    };
+                };
+            break;
+        };
+    };
 
-        case 38: // up
-            if (e.shiftKey) {
-                moveFilm(project, layerId, 'up');
-            } else {
-                selectFilm(project, layerId, 'up');
-            };
-        break;
+    if (layerId != null) {
+        switch(e.which) {
+            case 37: // left
+                if (e.shiftKey) {
+                    incSlider('minus', 20);
+                } else {
+                    incSlider('minus', 1);
+                };
+            break;
 
-        case 39: // right
-            if (e.shiftKey) {
-                incSlider('plus', 20);
-            } else {
-                incSlider('plus', 1);
-            };
-        break;
+            case 38: // up
+                if (e.shiftKey) {
+                    moveFilm(project, layerId, 'up');
+                } else {
+                    selectFilm(project, layerId, 'up');
+                };
+            break;
 
-        case 40: // down
-            if (e.shiftKey) {
-                moveFilm(project, layerId, 'down');
-            } else {
-                selectFilm(project, layerId, 'down');
-            };
-        break;
+            case 39: // right
+                if (e.shiftKey) {
+                    incSlider('plus', 20);
+                } else {
+                    incSlider('plus', 1);
+                };
+            break;
 
-        case 68: //d - delete
-            deleteFilm(project, layerId);
-        break;
+            case 40: // down
+                if (e.shiftKey) {
+                    moveFilm(project, layerId, 'down');
+                } else {
+                    selectFilm(project, layerId, 'down');
+                };
+            break;
 
-        case 67: //c - copy
-            copyFilm(project, layerId, 'deep');
-        break;
+            case 68: //d - delete
+                deleteFilm(project, layerId);
+            break;
 
-        case 89: //y - linked copy
-            copyFilm(project, layerId, 'shallow');
-        break;
+            case 67: //c - copy
+                copyFilm(project, layerId, 'deep');
+            break;
 
-        default: return; // exit this handler for other keys
-    }
-    e.preventDefault(); // prevent the default action (scroll / move caret)
+            case 89: //y - linked copy
+                copyFilm(project, layerId, 'shallow');
+            break;
+
+            case 65: //a - deselect stack
+                layerId = null;
+                listStack(project.config);
+            break;
+
+            default: return; // exit this handler for other keys
+        }
+        e.preventDefault(); // prevent the default action (scroll / move caret)
+        console.log('woo hoo');
+    };
 });
