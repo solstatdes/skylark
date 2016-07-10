@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from tmm.models import Project
+from tmm.models import Project, Log
 from tmm.forms import SaveForm
 import json
 import yaml
@@ -8,6 +8,27 @@ import os
 from django.conf import settings
 import db
 from stack import Stack
+from ipware.ip import get_ip
+
+def get_name(stack, path):
+    inc = 0
+    for a in stack.project:
+        item = stack.project[a]
+        if type(stack.project[a]) is list:
+            for i in item:
+                if (i.get('path', None) == path):
+                    print i.get('path',None), path
+                    name = i.get('layer', None)
+                    inc += 1
+                    print inc, name
+        elif type(stack.project[a]) is dict:
+            if (item.get('path', None) == path):
+                name = item.get('layer', None)
+                inc += 1
+    if inc == 1:
+        return name
+    else:
+        return None
 
 def home(request):
     projects = Project.objects.all()
@@ -23,17 +44,25 @@ def home(request):
 
     project.json = json.dumps(project.json)
     library = json.dumps(library)
-
-    
-    
     return render(request, 'tmm.html', {'project': project, 'form':SaveForm(), 'library':library, 'N':json.dumps(new_stack.N)})
 
 def add_layer(request):
     if request.method == 'POST':
         config = json.loads(request.POST.get('data'))
+        path = request.POST.get('path')
         new_stack = Stack(config, settings.LIBRARY_PATH)
+        name='no'
+        inc = 0
         response_data = {}
         response_data['N'] = json.dumps(new_stack.N)
+
+        print 'OKEY'
+
+        name = get_name(new_stack, path)
+
+        if name:
+            ip = get_ip(request)
+            log = Log(name=name,path=path, ip=ip).save()
         
         return HttpResponse(
             json.dumps(response_data),

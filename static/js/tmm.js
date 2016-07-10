@@ -134,7 +134,7 @@ function Stack(config, N){
 
 
     this.updateN = function(path) {
-        updateNAjax(this);
+        updateNAjax(this, path);
     };
 
     this.Adm = 2.6544e-3 //Admittance of free space
@@ -280,11 +280,11 @@ function addLayer (stack, path) {
 });
 
 
-function updateNAjax(stack) {
+function updateNAjax(stack, path) {
     $.ajax({
         url   :"add_layer/", //endpoint
         type  :"POST", // http method
-        data  : {data:JSON.stringify(stack.config)}, // data send with post request
+        data  : {data:JSON.stringify(stack.config), path:path}, // data send with post request
         success :function(json) {
             stack.N = parseJSON(json.N)
             stack.matrixBuild();
