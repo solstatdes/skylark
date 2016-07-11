@@ -269,11 +269,24 @@ $('body').on("click", ".libadd", function() {
     addLayer(project, path);
     
 });
+$('body').on("click", ".subschange", function() {
+    var path = $(this).attr('id');
+    addLayer(project, path, true);
+    
+});
 
-function addLayer (stack, path) {
-    splitstr = path.split("/").reverse();
+
+    function addLayer (stack, path,substrate) {
+        splitstr = path.split("/").reverse();
         console.log('film is being added');
-        stack.config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
+        if (substrate==true) {
+            console.log('its a substrate change');
+            stack.config.input.path = path;
+            stack.config.input.layer = splitstr[1];
+            console.log('substrate updated');
+        } else {
+            stack.config.stack.push({"layer": splitstr[1], "d": 100, "path": path});
+        }
         listStack(stack.config);
         stack.updateN(path);
     }
@@ -306,15 +319,17 @@ $(function() {
         libPage(newpath);
     });
 
-    function setLibpage(result) {
+    function setLibpage(result, path) {
+        console.log(path)
         page = parseJSON(result.page)
         //data = parseJSON(result.data)
         libpage = result;
-        chart = "<div id='lib-page-chart'></div>"
+        subs = "<a id="+path+" class='subschange'>Set as substrate</a>";
+        chart = "<div id='lib-page-chart'></div>";
         references = "<div class='subfolder'><p class='level2'><a>References</a></p><div class='sbfolder'><p class='level3'>"+page.REFERENCES+"</p></div></div>";
         comments = "<div class='subfolder'><p class='level2'><a>Comments</a></p><div class='sbfolder'><p class='level3'>"+page.COMMENTS+"</p></div></div>";
         data = "<div class='subfolder'><p class='level2'><a>Data</a></p><div class='sbfolder'><p class='level3'>Data type: "+page.DATA[0].type+"</p></div></div>";
-        $('#lib-page').html(chart+references+comments+data);
+        $('#lib-page').html(subs+chart+references+comments+data);
         plot(libpage, 'nk', 'lib-page-chart');
     }
 
@@ -326,7 +341,7 @@ $(function() {
             data  : {data:path}, // data send with post request
             success :function(json) {
                 console.log('success');
-                setLibpage(json);
+                setLibpage(json, path);
             },
             error: function(xhr,errmsg,err) {
                 console.log(xhr,status + ": " + xhr.responseText);
